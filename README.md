@@ -26,7 +26,14 @@ cd into the duetoday directory before running these commands
 4. ```git push``` will finally push all your changes to github
 
 
-## To Run the Server
+## To View the Files Locally (Front-end)
+1. Make sure Python 2.7 is install
+2. cd into the duetoday directory
+3. run ```python -m SimpleHTTPServer 8000```
+4. Go to http://localhost:8000 in your favorite browser
+
+
+## To Run the Server (Back-end)
 ```
 cd server
 python server.py
