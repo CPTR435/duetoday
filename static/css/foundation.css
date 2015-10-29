@@ -4363,8 +4363,9 @@ ul.pagination {
     .switch.round label:after {
       border-radius: 2rem; }
 
+/* see: http://stackoverflow.com/a/30672455
 table {
-  background: #FFFFFF;
+  background: transparent;
   border: solid 1px #DDDDDD;
   margin-bottom: 1.25rem;
   table-layout: auto; }
@@ -4405,6 +4406,7 @@ table {
   table tr td {
     display: table-cell;
     line-height: 1.125rem; }
+*/
 
 .tabs {
   margin-bottom: 0 !important;
