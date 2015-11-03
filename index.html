@@ -8,9 +8,9 @@
 		<link rel='stylesheet' href='static/css/foundation.css'>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 		<link rel='stylesheet' href='static/css/general.css'>
-        <link rel='stylesheet' href='static/fullcalendar/lib/cupertino/jquery-ui.min.css' />
-        <link href='static/fullcalendar/fullcalendar.css' rel='stylesheet' />
-        <link href='static/fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
+        <link rel='stylesheet' href='static/fullcalendar/lib/cupertino/jquery-ui.min.css'>
+        <link href='static/fullcalendar/fullcalendar.css' rel='stylesheet'>
+        <link href='static/fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print'>
 	</head>
 
 	<body>
@@ -31,10 +31,10 @@
 		        <li><label>Links</label></li>
                 <li><a href="#/planner"><i class="fa fa-home"></i> Planner</a></li>
 		        <li><a href="#/calendar"><i class="fa fa-calendar"></i> Calendar</a></li>
-                <li><a href="#/forum"><i class="fa fa-comments"></i> Forum</a></li>
+                <!--<li><a href="#/forum"><i class="fa fa-comments"></i> Forum</a></li>-->
                 <!--<li><a href='#' data-reveal-id='login-modal'>Login</a></li>-->
                 <li><a href='#'>Feeds</a></li>
-                <li><a href='#'>Logout</a></li>
+                <li><a href='#' id='logout'>Logout</a></li>
 		      </ul>
 		    </aside>
 
@@ -50,7 +50,7 @@
 				<h2 style="color: #333;">Login</h2>
 				<div class='row collapse'>
 					<div class='columns small-12'>
-						<input type='text' placeholder='firstname.lastname' name='username' required>
+						<input type='text' placeholder='firstname.lastname' name='username' required autofocus>
 					</div>
 					<div class='columns small-12'>
 						<input type='password' placeholder='password' name='password' required>
@@ -72,5 +72,59 @@
 		<script type="text/javascript" src="config.js"></script>
 		<script type="text/javascript" src="static/js/handlers.js"></script>
 		<script type="text/javascript" src="static/js/general.js"></script>
+        <script>
+        $(document).foundation(function(){});
+
+        // Auto focus the field with the autofocus attribute when the modal is
+        // displayed
+        // From: http://stackoverflow.com/a/28983888
+        $(document).on('opened.fndtn.reveal', '[data-reveal]', function() {
+            var modal = $(this);
+            modal.find('[autofocus]').focus();
+        });
+
+        // Note: kind of a mess at the moment...
+        $(document).ready(function() {
+            if(typeof(Storage) !== "undefined") {
+                // Insert into login form
+                var username = localStorage.getItem("username");
+                $('#login-form :input')[0].value = username;
+
+                // Make logout work
+                $('#logout').click(function() {
+                    if (localStorage.getItem("login") === "1") {
+                        localStorage.removeItem("login");
+                    }
+
+                    // Show login form again
+                    window.location.href = "#";
+                    $('#login-modal').foundation('reveal', 'open');
+                });
+
+                // If logged in, go to the planner
+                if (localStorage.getItem("login") === "1") {
+                    window.location.href = "#/planner";
+
+                // If not logged in, show login form
+                } else {
+                    $('#login-modal').foundation('reveal', 'open');
+                    $('#login-form').submit(function() {
+                        // For the quick prototype it really doesn't matter whether
+                        // this is valid
+                        var username = $('#login-form :input')[0].value;
+                        localStorage.setItem("login", "1");
+                        localStorage.setItem("username", username);
+                        $('#login-modal').foundation('reveal', 'close');
+                        window.location.href = "#/planner";
+
+                        // Do not submit the form
+                        return false;
+                    });
+                }
+            } else {
+                // Won't work, no Web Storage support
+            }
+        });
+        </script>
 	</body>
 </html>
