@@ -28,7 +28,7 @@ class Application(tornado.web.Application):
         self.options = options
         logger = logging.getLogger("pyserver")
         logger.setLevel(logging.DEBUG)
-        fh = logging.FileHandler("etc/logs/"+options.log_name+".py")
+        fh = logging.FileHandler("etc/logs/"+options.log_name+".log")
         fh.setLevel(logging.DEBUG)
         formatter = logging.Formatter("{'timestamp': %(asctime)s, 'loglevel' : %(levelname)s %(message)s }")
         fh.setFormatter(formatter)
