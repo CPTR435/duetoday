@@ -7,12 +7,12 @@ class User(Base):
     name = Column(String(250), nullable=False)
 
 
-class Event(Base):
-    __tablename__ = 'events'
-    id = Column(Integer, primary_key=True)
-    feed_id = Column(Integer, nullable=False, ForeignKey("feed.id"))
-
-
 class Feed(Base):
     __tablename__ = 'feeds'
     id = Column(Integer, primary_key=True)
+
+
+class Event(Base):
+    __tablename__ = 'events'
+    id = Column(Integer, primary_key=True)
+    feed_id = Column(Integer, nullable=False)#, ForeignKey("Feed.id"))
