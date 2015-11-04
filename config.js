@@ -1,5 +1,5 @@
 
 var config = {
   title: "Due Today",
-  server: "http://haugen.io/dueserver"
+  server: "https://haugen.io/dueserver"
 }

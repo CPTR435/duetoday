@@ -2,8 +2,8 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
 
 		<link rel='stylesheet' href='static/css/foundation.css'>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -108,17 +108,30 @@
                 // If not logged in, show login form
                 } else {
                     $('#login-modal').foundation('reveal', 'open');
-                    $('#login-form').submit(function() {
+                    $('#login-form').submit(function(event) {
+                        // prevent form from being submitted
+                        event.preventDefault();
+
                         // For the quick prototype it really doesn't matter whether
                         // this is valid
-                        var username = $('#login-form :input')[0].value;
-                        localStorage.setItem("login", "1");
-                        localStorage.setItem("username", username);
-                        $('#login-modal').foundation('reveal', 'close');
-                        window.location.href = "#/planner";
 
-                        // Do not submit the form
-                        return false;
+                        // This code *should* validate logins - Brock
+                        var username = $('#login-form :input')[0].value;
+                        var password = $('#login-form :input')[1].value;
+                        $.ajax({
+                            url: config.server+"/login",
+                            method: "POST",
+                            data: {'username': username, 'password': password},
+                            success: function(data) {
+                                if (data.token && data.token.length > 0) {
+                                    localStorage.setItem("login", "1");
+                                    localStorage.setItem("username", data.username);
+                                    localStorage.setItem("wwuid", data.wwuid);
+                                    $('#login-modal').foundation('reveal', 'close');
+                                    window.location.href = "#/planner";
+                                }
+                            }
+                        });
                     });
                 }
             } else {
