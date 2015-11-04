@@ -17,7 +17,7 @@ class Application(tornado.web.Application):
     def __init__(self):
         settings = {
             "cookie_secret": "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
-            "login_url": "/login"
+            "login_url": "/"
         }
 
         handlers = [
