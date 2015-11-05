@@ -20,79 +20,71 @@ today = mm+'/'+dd+'/'+yyyy;
 	$('#calendar').fullCalendar({
 		theme: true,
 		header: {
-			left: 'prev,next today',
+			left: 'prev today next',
 			center: 'title',
 			right: 'month,agendaWeek,agendaDay'
 		},
 		defaultDate: today,
-		editable: true,
+		editable: false,
 		eventLimit: true, // allow "more" link when too many events
-		events: [
-			{
-				title: 'All Day Event',
-				start: '2015-02-01'
-			},
-			{
-				title: 'Long Event',
-				start: '2015-02-07',
-				end: '2015-02-10'
-			},
-			{
-				id: 999,
-				title: 'Repeating Event',
-				start: '2015-02-09T16:00:00'
-			},
-			{
-				id: 999,
-				title: 'Repeating Event',
-				start: '2015-02-16T16:00:00'
-			},
-			{
-				title: 'Conference',
-				start: '2015-02-11',
-				end: '2015-02-13'
-			},
-			{
-				title: 'Meeting',
-				start: '2015-02-12T10:30:00',
-				end: '2015-02-12T12:30:00'
-			},
-			{
-				title: 'Lunch',
-				start: '2015-02-12T12:00:00'
-			},
-			{
-				title: 'Meeting',
-				start: '2015-02-12T14:30:00'
-			},
-			{
-				title: 'Happy Hour',
-				start: '2015-02-12T17:30:00'
-			},
-			{
-				title: 'Dinner',
-				start: '2015-02-12T20:00:00'
-			},
-			{
-				title: 'Birthday Party',
-				start: '2015-02-13T07:00:00'
-			},
-			{
-				title: 'Click for Google',
-				url: 'http://google.com/',
-				start: '2015-02-28'
+		events: {
+			url: 'events.json',
+			error: function() {
+				$('#script-warning').show();
 			}
-		]
+		},
+		loading: function(bool) {
+			$('#loading').toggle(bool);
+		},
+		selectable: true,
+		selectHelper: true,
+		select: function(start, end) {
+			/*var title = prompt('Event Title:');
+			var eventData;
+			if (title) {
+				eventData = {
+					title: title,
+					start: start,
+					end: end
+				};
+				//$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+			}*/
+			start_str=start.format('MM/DD/YYYY')
+			end_str=end.subtract(1, 'days').format('MM/DD/YYYY') // through end of previous
+			if (start.diff(end, 'days') != 0) // Multiple days
+				alert('Selected: '+start_str+' - '+end_str)
+			$('#calendar').fullCalendar('unselect');
+		},
+		dayClick: function(date, allDay, jsEvent, view) {
+            $('#calendar').fullCalendar('gotoDate', date);
+            $('#calendar').fullCalendar('changeView', 'agendaDay');
+		}
+	});
+
+	// Full calendar swipe, see comment on
+	// http://blog.arshaw.com/1/post/2014/08/fullcalendar-210-released.html
+	// swipe initialize
+	var recognizers = ["pan", "pinch", "press", "rotate", "tap"];
+	var mc = new Hammer(document.getElementById("calendar"));
+
+	for (i=0; i<recognizers.length; i++) {
+		mc.get(recognizers[i]).set({enable:false});
+	}
+	/*mc.get('swipe').set({
+		direction: Hammer.DIRECTION_HORIZONTAL,
+		threshold: 30,
+		velocity: 0.5
+	});*/
+
+	mc.on("swipeleft swiperight", function(ev) {
+		if(ev.type=="swipeleft")
+			$('#calendar').fullCalendar('next');
+		else
+			$('#calendar').fullCalendar('prev');
 	});
 });
 </script>
 <style>
-/*body {
-	margin: 40px 10px;
-	padding: 0;
-	font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-	font-size: 14px;
-}*/
 #calendar {
 	max-width: 900px;
 	margin: 0 auto;
@@ -103,6 +95,8 @@ today = mm+'/'+dd+'/'+yyyy;
 <div class="row">
   <div class="small-12 columns">
     <!--<h1 style='text-align: center;'>This is the <b>Calendar</b></h1>-->
+	<div id="script-warning" style="display: none">Note: could not load data.</div>
 	<div id='calendar'></div>
+	<div id='loading'>loading...</div>
   </div>
 </div>
