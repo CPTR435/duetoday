@@ -27,6 +27,7 @@ today = mm+'/'+dd+'/'+yyyy;
 		defaultDate: today,
 		editable: false,
 		eventLimit: true, // allow "more" link when too many events
+		eventLimitText: 'More',
 		events: {
 			url: 'events.json',
 			error: function() {
@@ -36,6 +37,9 @@ today = mm+'/'+dd+'/'+yyyy;
 		loading: function(bool) {
 			$('#loading').toggle(bool);
 		},
+		// Make sure we don't have multiple scroll bars
+		height: 'auto',
+		contentHeight: 'auto',
 		selectable: true,
 		selectHelper: true,
 		select: function(start, end) {
@@ -88,6 +92,7 @@ today = mm+'/'+dd+'/'+yyyy;
 #calendar {
 	max-width: 900px;
 	margin: 0 auto;
+	padding-bottom: 1em;
 }
 </style>
 
