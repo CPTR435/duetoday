@@ -1,5 +1,11 @@
 <!-- planner.html -->
-
+<script>
+$(document).ready(function(){
+    $("#toggle").click(function(){
+        $("div.eventDetails").toggle();
+    });
+});
+</script>
 <style>
 div.plannerItem {
   padding: 2em 5em;
@@ -8,11 +14,15 @@ div.plannerItem {
   border-width: 0px 0 1px 0;
   margin: 0
 }
-div.plannerItem2{
+div.eventName{
   padding: .5em 0 0 3em
 }
 div.date{
   font-weight: bold
+}
+div.eventDetails{
+  padding: .5em 0 0 2em;
+  display: none
 }
 </style>
 
@@ -25,14 +35,19 @@ div.date{
 
 <div class="plannerItem">
   <div class = "date"> Due Today:</div>
-  <div class = "plannerItem2">ENGR 433 HW#6 <!--<i class="fa fa-pencil"></i>--></div>
-  <div class = "plannerItem2">ENGR 451 HW 3c</div>
+    <div class = "eventName">ENGR 433 HW#6 <!--<i class="fa fa-pencil"></i>-->
+        <mybutton id="toggle"><i class ="fa fa-caret-down"></i></mybutton>
+    </div>
+  <div class = "eventDetails">I am the details to this assignment.</div>
+
+
+  <div class = "eventName">ENGR 451 HW 3c</div>
 </div>
 <div class="plannerItem">
   <div class="date">Due Tomorrow:</div>
-  <div class = "plannerItem2">ENGR 451 HW 4a </div>
+  <div class = "eventName">ENGR 451 HW 4a </div>
 </div>
 <div class="plannerItem">
   <div class = "date"> Due November 4:</div>
-  <div class = "plannerItem2"> DueToday Prototype</div>
+  <div class = "eventName"> DueToday Prototype</div>
 </div>
