@@ -1,6 +1,16 @@
 <!DOCTYPE>
 <html>
 	<head>
+	<style>
+	.mybutton {
+			height: 100%;
+		  text-align: center;
+			vertical-align: middle;
+			color: #FFFFFF;
+			font-size: x-large;
+			padding: 20% 0 0 0;
+	}
+	</style>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -13,6 +23,8 @@
         <link href='static/fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print'>
 	</head>
 
+
+
 	<body>
 		<div class="off-canvas-wrap" data-offcanvas>
 		  <div class="inner-wrap">
@@ -24,12 +36,20 @@
 		      <section class="middle tab-bar-section">
 		        <h1><a href="#" class="data-title" style='color: white;'></a></h1>
 		      </section>
+
+					<section class="right-small">
+								<a class ="" href="#/NewItem">
+										<div class="mybutton" >
+											<i class ="fa fa-plus center"></i>
+									</div>
+								</a>
+					</section>
 		    </nav>
 
 		    <aside class="left-off-canvas-menu">
 		      <ul class="off-canvas-list">
 		        <li><label>Links</label></li>
-                <li><a href="#/planner"><i class="fa fa-home"></i> Planner</a></li>
+                <li><a href="#/planner"><i class="fa fa-home "></i> Planner</a></li>
 		        <li><a href="#/calendar"><i class="fa fa-calendar"></i> Calendar</a></li>
                 <!--<li><a href="#/forum"><i class="fa fa-comments"></i> Forum</a></li>-->
                 <!--<li><a href='#' data-reveal-id='login-modal'>Login</a></li>-->
