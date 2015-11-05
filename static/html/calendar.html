@@ -2,31 +2,28 @@
 <script src='static/fullcalendar/lib/moment.min.js'></script>
 <script src='static/fullcalendar/fullcalendar.min.js'></script>
 <script>
+function BuildMoreLink(items) {
+    if (items == 0)
+        return "";
+    else if (items == 1)
+        return "1 Item";
+    else
+        return items + " Items";
+}
+
 $(document).ready(function() {
-  var today = new Date();
-var dd = today.getDate();
-var mm = today.getMonth()+1; //January is 0!
-var yyyy = today.getFullYear();
-
-if(dd<10) {
-    dd='0'+dd
-}
-
-if(mm<10) {
-    mm='0'+mm
-}
-
-today = mm+'/'+dd+'/'+yyyy;
 	$('#calendar').fullCalendar({
+        // Basic formatting
 		theme: true,
 		header: {
 			left: 'prev today next',
 			center: 'title',
 			right: 'month,agendaWeek,agendaDay'
 		},
-		defaultDate: today,
+		defaultDate: moment().format('MM/DD/YYYY'),
 		editable: false,
-		eventLimit: true, // allow "more" link when too many events
+
+        // Load events
 		events: {
 			url: 'events.json',
 			error: function() {
@@ -36,29 +33,53 @@ today = mm+'/'+dd+'/'+yyyy;
 		loading: function(bool) {
 			$('#loading').toggle(bool);
 		},
-		selectable: true,
+
+		// Make sure we don't have multiple scroll bars
+		height: 'auto',
+		contentHeight: 'auto',
+
+        // When you click on day it takes you to day agenda
+		dayClick: function(date, allDay, jsEvent, view) {
+            $('#calendar').fullCalendar('gotoDate', date);
+            $('#calendar').fullCalendar('changeView', 'agendaDay');
+		},
+
+		// Show number of events (see: http://stackoverflow.com/a/24024204)
+		eventLimit: true, // allow "more" link when too many events
+		eventLimitText: 'More',
+		eventRender: function (event, element, view) {
+            if (view.name == 'month') {
+                var eventDateString = event.start.format("YYYY-MM-DD");
+                var $calDay = $('td.fc-day[data-date="' + eventDateString + '"]');
+                var dayEventCount = $calDay.attr('dayEventCount') ? parseInt($calDay.attr('dayEventCount')) : 0;
+
+                dayEventCount = dayEventCount + 1;
+                $calDay.attr('dayEventCount', dayEventCount);
+
+                var missingEvents = dayEventCount;
+                $('.moreLink', $calDay).remove();
+                // Using container to get vertical alignment
+                $moreContainer = $('<div class="moreContainer"/>');
+                $moreLink = $('<div class="moreLink"/>');
+                $moreLink.html(BuildMoreLink(missingEvents));
+                $moreContainer.html($moreLink);
+                $calDay.append($moreContainer);
+                return false;
+            }
+
+            return true;
+		}
+
+		/* Use when needing selection...
+        selectable: true,
 		selectHelper: true,
 		select: function(start, end) {
-			/*var title = prompt('Event Title:');
-			var eventData;
-			if (title) {
-				eventData = {
-					title: title,
-					start: start,
-					end: end
-				};
-				//$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-			}*/
 			start_str=start.format('MM/DD/YYYY')
 			end_str=end.subtract(1, 'days').format('MM/DD/YYYY') // through end of previous
 			if (start.diff(end, 'days') != 0) // Multiple days
 				alert('Selected: '+start_str+' - '+end_str)
 			$('#calendar').fullCalendar('unselect');
-		},
-		dayClick: function(date, allDay, jsEvent, view) {
-            $('#calendar').fullCalendar('gotoDate', date);
-            $('#calendar').fullCalendar('changeView', 'agendaDay');
-		}
+		},*/
 	});
 
 	// Full calendar swipe, see comment on
@@ -88,6 +109,20 @@ today = mm+'/'+dd+'/'+yyyy;
 #calendar {
 	max-width: 900px;
 	margin: 0 auto;
+	padding-bottom: 1em;
+}
+div.moreLink {
+    text-align: center;
+    font-style: italic;
+    height: 100%;
+    display: table-cell;
+    vertical-align: middle;
+}
+div.moreContainer {
+    display: table;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
 </style>
 

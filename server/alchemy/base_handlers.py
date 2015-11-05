@@ -13,7 +13,9 @@ class BaseHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Origin", "*")
 
     def get_current_user(self):
-		return self.get_secure_cookie("wwuid")
+        wwuid = self.get_secure_cookie("wwuid")
+        user = query_user(wwuid)
+        return user
 
 
 class IndexHandler(BaseHandler):
@@ -38,15 +40,18 @@ class LoginHandler(BaseHandler):
 				o = json.loads(r.text)
 				if 'user' in o:
 					o = o['user']
+					logger.debug(o)
+					user = User(wwuid=o["wwuid"], name=o["full_name"], mask_photo=o["photo"])
+					user = addOrUpdate(user)
 					self.set_secure_cookie("wwuid", str(o['wwuid']), expires_days=30)
 					logger.info("LoginHandler: success")
-					self.write(o)
+					self.write(user.to_json())
 				else:
 					logger.info("LoginHandler: error")
 					self.write({'error':'invalid login credentials'})
 			except Exception as e:
-				logger.error("LoginHandler exception: "+ str(e.message))
-				self.write({'error':str(e.message)})
+				logger.debug("LoginHandler exception: "+ str(e.message))
+				self.write({'error': str(e.message)})
 		else:
 			logger.error("LoginHandler: invalid post parameters")
 			self.write({'error':'invalid post parameters'})

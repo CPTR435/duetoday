@@ -107,6 +107,12 @@
 
         // Note: kind of a mess at the moment...
         $(document).ready(function() {
+            // Hide menu when clicking link (more intuitive on phone)
+            $(".off-canvas-list a").on("click.toggleCanvas", function(){
+                $(".exit-off-canvas").click();
+            });
+
+            // Login
             if(typeof(Storage) !== "undefined") {
                 // Insert into login form
                 var username = localStorage.getItem("username");

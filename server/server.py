@@ -8,6 +8,7 @@ import tornado.autoreload
 from tornado.options import define, options
 
 from alchemy.base_handlers import *
+from alchemy.feed_handlers import *
 
 define("port", default=8888, help="run on the given port", type=int)
 define("log_name", default="pyserver", help="name of the logfile")
@@ -21,6 +22,10 @@ class Application(tornado.web.Application):
         }
 
         handlers = [
+            (r"/item", ItemHandler),
+            (r"/item/(.*)", ItemHandler),
+            (r"/feed", FeedHandler),
+            (r"/feed/(.*)", FeedHandler),
             (r"/login", LoginHandler),
             (r"/", IndexHandler),
         ]
