@@ -1,27 +1,27 @@
 <!-- planner.html -->
 <script>
 $(document).ready(function(){
-    $("#toggle").click(function(){
-        $("div.eventDetails").toggle();
+    $("div.toggle").click(function(){
+        $(this).next().toggle();
     });
 });
 </script>
 <style>
 div.plannerItem {
-  padding: 2em 5em;
+  padding: 1em 0em 1em 2em;
   border-style: solid;
   border-color: #000000;
   border-width: 0px 0 1px 0;
   margin: 0
 }
 div.eventName{
-  padding: .5em 0 0 3em
+  padding: .5em 0 0 1em
 }
 div.date{
   font-weight: bold
 }
 div.eventDetails{
-  padding: .5em 0 0 2em;
+  padding: .5em 1em 0 0em;
   display: none
 }
 </style>
@@ -35,14 +35,15 @@ div.eventDetails{
 
 <div class="plannerItem">
   <div class = "date"> Due Today:</div>
-    <div class = "eventName">ENGR 433 HW#6 <!--<i class="fa fa-pencil"></i>-->
-        <mybutton id="toggle"><i class ="fa fa-caret-down"></i></mybutton>
-    </div>
-  <div class = "eventDetails">I am the details to this assignment.</div>
 
+  <div class = "eventName toggle">ENGR 433 HW#6 <i class ="fa fa-caret-down"></i></div>
+  <div class = "eventDetails">This is the assignment details</div>
 
-  <div class = "eventName">ENGR 451 HW 3c</div>
+  <div class = "eventName toggle">ENGR 451 HW 3c <i class ="fa fa-caret-down"></i></div>
+  <div class = "eventDetails">This is the assignment details</div>
+
 </div>
+
 <div class="plannerItem">
   <div class="date">Due Tomorrow:</div>
   <div class = "eventName">ENGR 451 HW 4a </div>
