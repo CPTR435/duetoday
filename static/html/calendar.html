@@ -16,10 +16,11 @@ $(document).ready(function() {
         // Basic formatting
 		theme: true,
 		header: {
-			left: 'prev today next',
+			left: 'prev,next,today',
 			center: 'title',
 			right: 'month,agendaWeek,agendaDay'
 		},
+        titleFormat: 'MMM YYYY',
 		defaultDate: moment().format('MM/DD/YYYY'),
 		editable: false,
 
@@ -123,6 +124,9 @@ div.moreContainer {
     height: 100%;
     margin-left: auto;
     margin-right: auto;
+}
+td.fc-day, td.fc-day-number {
+    cursor: pointer;
 }
 </style>
 
