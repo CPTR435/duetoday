@@ -20,7 +20,11 @@ $(document).ready(function() {
 			center: 'title',
 			right: 'month,agendaWeek,agendaDay'
 		},
-        titleFormat: 'MMM YYYY',
+        views: {
+            month: { titleFormat: 'MMM YYYY' },
+            week: { titleFormat: 'MMM YYYY' },
+            day: { titleFormat: 'MM/D/YYYY' }
+        },
 		defaultDate: moment().format('MM/DD/YYYY'),
 		editable: false,
 
