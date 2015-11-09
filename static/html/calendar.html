@@ -70,6 +70,11 @@ $(document).ready(function() {
                 $moreContainer.html($moreLink);
                 $calDay.append($moreContainer);
                 return false;
+            } else if (view.name == 'agendaDay') {
+                // Show details, see: http://stackoverflow.com/a/3433826
+                if (event.description !== undefined)
+                    element.find('.fc-title').append("<br/>" + event.description);
+            } else if (view.name == 'agendaWeek') {
             }
 
             return true;
