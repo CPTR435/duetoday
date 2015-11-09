@@ -1,7 +1,13 @@
 [
   {
+    "id": 1,
+    "feed_id": 1,
+    "description": "lets try",
+    "creator": "blake",
+    "updated_at": "2015-11-05",
     "title": "All Day Event",
-    "start": "2015-11-01"
+    "start": "2015-11-01",
+    "end": "2015-11-01"
   },
   {
     "title": "Long Event",
