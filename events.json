@@ -2,7 +2,7 @@
   {
     "id": 1,
     "feed_id": 1,
-    "description": "lets try",
+    "description": "this is a very long all day event",
     "creator": "blake",
     "updated_at": "2015-11-05",
     "title": "All Day Event",
@@ -12,31 +12,37 @@
   {
     "title": "Long Event",
     "start": "2015-11-07",
-    "end": "2015-11-10"
+    "end": "2015-11-10",
+    "description": "This is another long event..."
   },
   {
     "id": "999",
     "title": "Repeating Event",
-    "start": "2015-11-09T16:00:00-05:00"
+    "start": "2015-11-09T16:00:00-05:00",
+    "description": "This is a repeating event with an ID of 999"
   },
   {
     "id": "999",
     "title": "Repeating Event",
-    "start": "2015-11-16T16:00:00-05:00"
+    "start": "2015-11-16T16:00:00-05:00",
+    "description": "This is the same repeating event with an ID of 999"
   },
   {
     "title": "Conference",
     "start": "2015-11-11",
-    "end": "2015-11-13"
+    "end": "2015-11-13",
+    "description": "This is a conference on the eleventh"
   },
   {
     "title": "Meeting",
     "start": "2015-11-12T10:30:00-05:00",
-    "end": "2015-11-12T12:30:00-05:00"
+    "end": "2015-11-12T12:30:00-05:00",
+    "description": "This is a meeting! Yay!"
   },
   {
     "title": "Lunch",
-    "start": "2015-11-12T12:00:00-05:00"
+    "start": "2015-11-12T12:00:00-05:00",
+    "description": "Lunch! I love lunch!!!"
   },
   {
     "title": "Meeting",
@@ -44,7 +50,8 @@
   },
   {
     "title": "Happy Hour",
-    "start": "2015-11-12T17:30:00-05:00"
+    "start": "2015-11-12T17:30:00-05:00",
+    "description": "Woe is me... for I have homework"
   },
   {
     "title": "Dinner",
@@ -57,6 +64,7 @@
   {
     "title": "Click for Google",
     "url": "http://google.com/",
-    "start": "2015-11-28"
+    "start": "2015-11-28",
+    "description": "\"Use Bing\" says the voice in your head."
   }
 ]

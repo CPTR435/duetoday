@@ -1,8 +1,106 @@
 <!-- forum.html -->
 
-<br><br>
+<!--<br><br>
 <div class="row">
   <div class="small-12 columns">
     <h1 style='text-align: center;'>"Add item"</h1>
   </div>
+</div>-->
+<style media="screen">
+  .padded {padding: 1em 1em 1em 1em;}
+</style>
+
+<div class="padded">
+<form>
+  <div class="row">
+    <div class="large-12 columns">
+        <input type="text" placeholder="Title" />
+      </label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-4 columns">
+        <input type="text" placeholder="Location" />
+      <label>Start Date</label>
+    </div>
+    <div class="large-4 columns">
+      <div class="row collapse>"
+        <label>Start Time</label>
+        <div class="small-9 columns">
+          <input type="text" placeholder="Choose Start" />
+        </div>
+        <div class="small-3 columns">
+          <span class="postfix">time</span>
+        </div>
+      </div>
+    </div>
+    <div class="large-4 columns">
+      <label>End Date</label>
+    </div>
+    <div class="large-4 columns">
+      <div class="row collapse>"
+        <label>End Time</label>
+        <div class="small-9 columns">
+          <input type="text" placeholder="Choose Start" />
+        </div>
+        <div class="small-3 columns">
+          <span class="postfix">time</span>
+        </div>
+      </div>
+    </div>
+    <!--<div class="large-4 columns">
+      <div class="row collapse">
+        <label>Input Label</label>
+        <div class="small-9 columns">
+          <input type="text" placeholder="small-9.columns" />
+        </div>
+        <div class="small-3 columns">
+          <span class="postfix">.com</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>Select Box
+        <select>
+          <option value="husker">Husker</option>
+          <option value="starbuck">Starbuck</option>
+          <option value="hotdog">Hot Dog</option>
+          <option value="apollo">Apollo</option>
+        </select>
+      </label>
+    </div>
+  </div>
+-->
+
+  <div class="row">
+    <div class="large-6 columns">
+      <label>Repeat</label>
+      <input type="radio" name="repeat" value="Once" id="repeat1"><label for="repeat1">One-time event</label>
+      <input type="radio" name="repeat" value="Daily" id="repeatdaily"><label for="repeatdaily">Daily</label>
+      <input type="radio" name="repeat" value="Weekday" id="everyweekday"><label for="everyweekday">Every weekday (Mon-Fri)</label>
+      <input type="radio" name="repeat" value="Weekly" id="Dayweekly"><label for="Dayweekly">Weekly (every Thursday)</label>
+      <input type="radio" name="repeat" value="Alternateweekly" id="Twoweeks"><label for="Twoweeks">Every 2 weeks (Thursday)</label>
+      <input type="radio" name="repeat" value="Monthly" id="Monthlyweekday"><label for="Monthlyweekday">Monthly (every first Thursday)</label>
+      <input type="radio" name="repeat" value="Daymonthly" id="MonthlyNumDay"><label for="MonthlyNumDay">Monthly (on day 5)</label>
+      <input type="radio" name="repeat" value="Yearly" id="repeatyearly"><label for="repeatyearly">Yearly (on November 5)</label>
+    </div>
+
+    <!--
+    <div class="large-6 columns">
+      <label>Check these out</label>
+      <input id="checkbox1" type="checkbox"><label for="checkbox1">Checkbox 1</label>
+      <input id="checkbox2" type="checkbox"><label for="checkbox2">Checkbox 2</label>
+    </div>
+  </div>
+-->
+  <div class="row">
+    <div class="large-12 columns">
+      <label>Notes
+        <textarea placeholder="Enter Text"></textarea>
+      </label>
+    </div>
+  </div>
+</form>
 </div>
