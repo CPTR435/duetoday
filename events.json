@@ -1,8 +1,13 @@
 [
   {
+    "id": 1,
+    "feed_id": 1,
+    "description": "this is a very long all day event",
+    "creator": "blake",
+    "updated_at": "2015-11-05",
     "title": "All Day Event",
     "start": "2015-11-01",
-    "description": "This is a very long, all day event!!!"
+    "end": "2015-11-01"
   },
   {
     "title": "Long Event",
