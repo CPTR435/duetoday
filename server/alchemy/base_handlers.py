@@ -19,10 +19,12 @@ class BaseHandler(tornado.web.RequestHandler):
 
 
 class IndexHandler(BaseHandler):
-	@tornado.web.authenticated
 	def get(self):
-		wwuid = self.current_user.wwuid
-		self.write(str(wwuid))
+		user = self.current_user
+		if user:
+			self.write(str(user.wwuid))
+		else:
+			self.write("Not logged in")
 
 
 class LoginHandler(BaseHandler):

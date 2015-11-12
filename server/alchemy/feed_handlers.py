@@ -17,28 +17,28 @@ class FeedHandler(BaseHandler):
 
     @tornado.web.authenticated
     def put(self):
-        name = self.get_argument("name", None)
+        title = self.get_argument("title", None)
         user = self.current_user
-        if not name:
-            return self.write({'error':'you must give us a name'})
+        if not title:
+            return self.write({'error':'you must give us a title'})
         administrators = self.get_argument("administrators", None)
-        feed = Feed(name=name,owner=user.wwuid,administrators=administrators)
+        feed = Feed(title=title,owner=user.wwuid,administrators=administrators)
         feed = addOrUpdate(feed)
         self.write({'feed': feed.to_json()})
 
     @tornado.web.authenticated
     def post(self, id):
-        name = self.get_argument("name", None)
+        title = self.get_argument("title", None)
         user = self.current_user
-        if not name:
-            return self.write({'error':'you must give us a name'})
+        if not title:
+            return self.write({'error':'you must give us a title'})
         feed = query_by_id(Feed, id)
         if not feed:
             return self.write({'error':'feed does not exist'})
         if feed.owner != user.wwuid and user.wwuid not in feed.administrators.split(","):
             return self.write({'error':'insufficient permissions'})
         administrators = self.get_argument("administrators", None)
-        feed.name = name
+        feed.title = title
         feed.administrators = administrators
         feed = addOrUpdate(feed)
         self.write({'feed': feed.to_json()})
@@ -73,14 +73,14 @@ class ItemHandler(BaseHandler):
             return self.write({'error':'feed does not exist'})
         if feed.owner != user.wwuid and user.wwuid not in feed.administrators.split(","):
             return self.write({'error':'insufficient permissions'})
-        name = self.get_argument("name", None)
-        start_time = self.get_argument("start_time", None)
-        end_time = self.get_argument("end_time", None)
+        title = self.get_argument("title", None)
+        start = dTime(self.get_argument("start", None))
+        end = dTime(self.get_argument("end", None))
         user = self.current_user
-        if not name or not start_time or not end_time:
-            return self.write({'error':'you must give us a name and a start_time and an end_time'})
+        if not title or not start or not end:
+            return self.write({'error':'you must give us a title and a start and an end'})
         description = self.get_argument("description", None)
-        item = Item(feed_id=feed_id,name=name,creator=user.wwuid,description=description,start_time=start_time,end_time=end_time)
+        item = Item(feed_id=feed_id,title=title,creator=user.wwuid,description=description,start=start,end=end)
         item = addOrUpdate(item)
         self.write({'item': item.to_json()})
 
@@ -96,19 +96,19 @@ class ItemHandler(BaseHandler):
             return self.write({'error':'feed does not exist'})
         if feed.owner != user.wwuid and user.wwuid not in feed.administrators.split(","):
             return self.write({'error':'insufficient permissions'})
-        name = self.get_argument("name", None)
-        start_time = self.get_argument("start_time", None)
-        end_time = self.get_argument("end_time", None)
+        title = self.get_argument("title", None)
+        start = dTime(self.get_argument("start", None))
+        end = dTime(self.get_argument("end", None))
         user = self.current_user
-        if not name or not start_time or not end_time:
-            return self.write({'error':'you must give us a name and a start_time and an end_time'})
+        if not title or not start or not end:
+            return self.write({'error':'you must give us a title and a start and an end'})
         description = self.get_argument("description", None)
 
         item.feed_id = feed_id
-        item.name = name
+        item.title = title
         item.description = description
-        item.start_time = start_time
-        item.end_time = end_time
+        item.start = start
+        item.end = end
         item = addOrUpdate(item)
         self.write({'item': item.to_json()})
 
@@ -125,3 +125,11 @@ class ItemHandler(BaseHandler):
             return self.write({'error':'insufficient permissions'})
         delete_thing(item)
         self.write(json.dumps("success"))
+
+class ListFeedItemsHandler(BaseHandler):
+    def get(self, id):
+        feed = query_by_id(Feed, id)
+        if not feed:
+            return self.write({'error':'feed does not exist'})
+        items = query_by_field(Item, "feed_id", id)
+        self.write(json.dumps([i.to_json() for i in items]))
