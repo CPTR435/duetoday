@@ -3,9 +3,11 @@ from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
 import logging
 
+from dateutil import parser
+
 Base = declarative_base()
 
-from alchemy.base_models import *
+from alchemy.models import *
 
 engine = create_engine("sqlite:///data.db")
 
@@ -75,3 +77,10 @@ def delete_thing(thing):
     except Exception as e:
         logger.info(e)
         s.rollback()
+
+def dTime(string):
+    try:
+        d = parser.parse(string)
+        return d
+    except Exception as e:
+        return None

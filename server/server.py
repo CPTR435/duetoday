@@ -26,6 +26,7 @@ class Application(tornado.web.Application):
             (r"/item/(.*)", ItemHandler),
             (r"/feed", FeedHandler),
             (r"/feed/(.*)", FeedHandler),
+            (r"/feed_items/(.*)", ListFeedItemsHandler),
             (r"/login", LoginHandler),
             (r"/", IndexHandler),
         ]
