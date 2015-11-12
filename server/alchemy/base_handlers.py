@@ -21,8 +21,8 @@ class BaseHandler(tornado.web.RequestHandler):
 class IndexHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
-		wwuid = self.current_user
-		self.write(wwuid)
+		wwuid = self.current_user.wwuid
+		self.write(str(wwuid))
 
 
 class LoginHandler(BaseHandler):

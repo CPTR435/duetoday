@@ -5,7 +5,7 @@ import logging
 
 Base = declarative_base()
 
-from alchemy.base_models import *
+from alchemy.models import *
 
 engine = create_engine("sqlite:///data.db")
 

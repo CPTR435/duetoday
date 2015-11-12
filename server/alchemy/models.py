@@ -28,8 +28,8 @@ class Item(Base):
     feed_id = Column(Integer, ForeignKey("feeds.id"), nullable=False)
     name = Column(String(250), nullable=False)
     description = Column(String(250))
-    start_time = Column(String(250), nullable=False)
-    end_time = Column(String(250), nullable=False)
+    start = Column(String(250), nullable=False)
+    end = Column(String(250), nullable=False)
     creator = Column(Integer, ForeignKey("users.wwuid"), nullable=False)
     updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
     def to_json(self):
