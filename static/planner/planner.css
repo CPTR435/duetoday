@@ -1,0 +1,17 @@
+.plannerItem { /*this is the border*/
+  padding: 1em 0em 1em 2em;
+  border-style: solid;
+  border-color: #000000;
+  border-width: 0px 0 1px 0;
+  margin: 0
+}
+.eventName{/*style for events title*/
+  padding: .5em 0 0 1em
+}
+.date{/*style for date*/
+  font-weight: bold
+}
+.eventDetails{/*style for devent description*/
+  padding: .5em 1em 0 0em;
+  display: none
+}

@@ -1,54 +1,63 @@
 <!-- planner.html -->
+<link type="text/css" rel=StyleSheet href = "static/planner/planner.css">
 <script>
 $(document).ready(function(){
     $("div.toggle").click(function(){
-        $(this).next().toggle();
+        $(this).next('.eventDetails').toggle();
     });
-});
+
+  $.ajax(
+    {
+      dataType: "json",
+      url: "events.json",
+      success: function(events){
+        var information ="<div class ='plannerItem'>"+
+         "<div class = 'date'>Due: " + events[0].start + "</div>"+
+         "<div class = \"eventName toggle\">" + events[0].title +"<i class =\"fa fa-caret-down\"></i></div>"+
+         "<div class = \"eventDetails\">" + events[0].description +"</div></div>";
+        for(var i=1; i<9; i++){
+          if(events[i].start == events[i-1].start){
+          information = information.substring(0,6);
+          information +=
+           "<div class = 'date'>Due: " + events[i].start + "</div>"+
+           "<div class = \"eventName toggle\">" + events[i].title +"<i class =\"fa fa-caret-down\"></i></div>"+
+           "<div class = \"eventDetails\">" + events[i].description +"</div></div>";
+         }
+         else{
+           information +="<div class ='plannerItem'>"+
+            "<div class = 'date'>Due: " + events[i].start + "</div>"+
+            "<div class = \"eventName toggle\">" + events[i].title +"<i class =\"fa fa-caret-down\"></i></div>"+
+            "<div class = \"eventDetails\">" + events[i].description +"</div></div>";
+         }
+       }
+        $("#eventDetails").html(information);
+      }
+
+    });
+  });
 </script>
-<style>
-div.plannerItem {
-  padding: 1em 0em 1em 2em;
-  border-style: solid;
-  border-color: #000000;
-  border-width: 0px 0 1px 0;
-  margin: 0
-}
-div.eventName{
-  padding: .5em 0 0 1em
-}
-div.date{
-  font-weight: bold
-}
-div.eventDetails{
-  padding: .5em 1em 0 0em;
-  display: none
-}
-</style>
+
+<div id = "eventDetails"></div>
 
 
-      <!--
-      <div class="plannerItem">
-        <div class = "small-3 large-3 columns"> Due Today:</div>
-        <div class = "small-9 large-9 columns"> Engr 433 HW#6:</div>
-      </div>-->
 
-<div class="plannerItem">
+
+
+<div class ="plannerItem">
   <div class = "date"> Due Today:</div>
-
   <div class = "eventName toggle">ENGR 433 HW#6 <i class ="fa fa-caret-down"></i></div>
   <div class = "eventDetails">This is the assignment details</div>
 
   <div class = "eventName toggle">ENGR 451 HW 3c <i class ="fa fa-caret-down"></i></div>
-  <div class = "eventDetails">This is the assignment details</div>
+  <div class = "eventDetails">Hello World!</div>
 
 </div>
 
-<div class="plannerItem">
+<div class ="plannerItem">
   <div class="date">Due Tomorrow:</div>
   <div class = "eventName">ENGR 451 HW 4a </div>
 </div>
-<div class="plannerItem">
+<div class ="plannerItem">
   <div class = "date"> Due November 4:</div>
   <div class = "eventName"> DueToday Prototype</div>
 </div>
