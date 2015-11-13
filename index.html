@@ -145,25 +145,24 @@
                         // prevent form from being submitted
                         event.preventDefault();
 
-                        // For the quick prototype it really doesn't matter whether
-                        // this is valid
-
-                        // This code *should* validate logins - Brock
-                        var username = $('#login-form :input')[0].value;
-                        var password = $('#login-form :input')[1].value;
+                        // Validate Logins
+                        var username = $('#login-form input[type=text]')[0].value;
+                        var password = $('#login-form input[type=password]')[0].value;
                         $.ajax({
                             url: config.server+"/login", // this url scheme will be used for all other APIs
                             method: "POST",
                             data: {'username': username, 'password': password},
                             success: function(data) {
-                                if (data.token && data.token.length > 0) {
+                                // We never get a token? TODO: fix this if
+                                //if (data.token && data.token.length > 0) {
+                                if (data !== undefined && data.wwuid > 0) {
                                     localStorage.setItem("login", "1");
-                                    localStorage.setItem("username", data.username);
+                                    localStorage.setItem("username", username);
                                     localStorage.setItem("wwuid", data.wwuid);
                                     $('#login-modal').foundation('reveal', 'close');
                                     window.location.href = "#/planner";
                                 } else {
-                                    // login failed, maybe show an error?
+                                    $("#login-modal .errors h5").text(data.error);
                                 }
                             },
                             error: function(XMLHttpRequest, textStatus, errorThrown) {
