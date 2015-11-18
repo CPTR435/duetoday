@@ -18,7 +18,7 @@ class BaseHandler(tornado.web.RequestHandler):
         return user
 
 
-class IndexHandler(BaseHandler):
+class VerifyHandler(BaseHandler):
     def get(self):
         user = self.current_user
         if user:
@@ -26,6 +26,9 @@ class IndexHandler(BaseHandler):
         else:
             self.write("Not logged in")
 
+class IndexHandler(BaseHandler):
+    def get(self):
+        self.render("../../index.html")
 
 class LoginHandler(BaseHandler):
     def get(self):

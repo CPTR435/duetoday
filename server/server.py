@@ -18,7 +18,7 @@ class Application(tornado.web.Application):
     def __init__(self):
         settings = {
             "cookie_secret": "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
-            "login_url": "/"
+            "login_url": "/",
         }
 
         handlers = [
@@ -29,6 +29,7 @@ class Application(tornado.web.Application):
             (r"/feed_items/(.*)", ListFeedItemsHandler),
             (r"/login", LoginHandler),
             (r"/", IndexHandler),
+            (r"/(.*)", tornado.web.StaticFileHandler, {'path': '../'}),
         ]
 
         self.options = options
