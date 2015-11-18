@@ -9,6 +9,7 @@
   padding: .5em 0 0 1em
 }
 .date{/*style for date*/
+  padding: .5em 0 0 0;
   font-weight: bold
 }
 .eventDetails{/*style for devent description*/

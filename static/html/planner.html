@@ -1,63 +1,43 @@
 <!-- planner.html -->
+<script src='static/fullcalendar/lib/moment.min.js'></script>
 <link type="text/css" rel=StyleSheet href = "static/planner/planner.css">
 <script>
 $(document).ready(function(){
-    $("div.toggle").click(function(){
-        $(this).next('.eventDetails').toggle();
-    });
+
 
   $.ajax(
     {
       dataType: "json",
       url: "events.json",
+      cache: false,
       success: function(events){
         var information ="<div class ='plannerItem'>"+
-         "<div class = 'date'>Due: " + events[0].start + "</div>"+
+         "<div class = \"date\">Due: " + moment(events[0].start).format('dddd') + "</div>"+
          "<div class = \"eventName toggle\">" + events[0].title +"<i class =\"fa fa-caret-down\"></i></div>"+
          "<div class = \"eventDetails\">" + events[0].description +"</div></div>";
-        for(var i=1; i<9; i++){
-          if(events[i].start == events[i-1].start){
-          information = information.substring(0,6);
+        for(var i=1; i<events.length; i++){
+          if(moment(events[i-1].start).diff(moment(events[i].start),'days')==0){
+          information = information.slice(0,-6);
           information +=
-           "<div class = 'date'>Due: " + events[i].start + "</div>"+
            "<div class = \"eventName toggle\">" + events[i].title +"<i class =\"fa fa-caret-down\"></i></div>"+
            "<div class = \"eventDetails\">" + events[i].description +"</div></div>";
          }
          else{
            information +="<div class ='plannerItem'>"+
-            "<div class = 'date'>Due: " + events[i].start + "</div>"+
+            "<div class = \"date\">Due: " + moment(events[i].start).format('dddd') + "</div>"+
             "<div class = \"eventName toggle\">" + events[i].title +"<i class =\"fa fa-caret-down\"></i></div>"+
             "<div class = \"eventDetails\">" + events[i].description +"</div></div>";
          }
        }
         $("#eventDetails").html(information);
+        $("div.toggle").click(function(){
+            $(this).next(".eventDetails").toggle();
+        });
       }
+
 
     });
   });
 </script>
 
 <div id = "eventDetails"></div>
-
-
-
-
-
-<div class ="plannerItem">
-  <div class = "date"> Due Today:</div>
-  <div class = "eventName toggle">ENGR 433 HW#6 <i class ="fa fa-caret-down"></i></div>
-  <div class = "eventDetails">This is the assignment details</div>
-
-  <div class = "eventName toggle">ENGR 451 HW 3c <i class ="fa fa-caret-down"></i></div>
-  <div class = "eventDetails">Hello World!</div>
-
-</div>
-
-<div class ="plannerItem">
-  <div class="date">Due Tomorrow:</div>
-  <div class = "eventName">ENGR 451 HW 4a </div>
-</div>
-<div class ="plannerItem">
-  <div class = "date"> Due November 4:</div>
-  <div class = "eventName"> DueToday Prototype</div>
-</div>
