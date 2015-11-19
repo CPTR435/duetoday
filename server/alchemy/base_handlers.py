@@ -48,7 +48,8 @@ class LoginHandler(BaseHandler):
                     logger.debug(o)
                     user = query_user(o["wwuid"])
                     if not user:
-                        user = User(wwuid=o["wwuid"], name=o["full_name"], mask_photo=o["photo"])
+                        # Note to Brock: o["photo"] gives a "LoginHandler exception: photo"
+                        user = User(wwuid=o["wwuid"], name=o["full_name"], mask_photo="") #o["photo"])
                         user = addOrUpdate(user)
                     self.set_secure_cookie("wwuid", str(o['wwuid']), expires_days=30)
                     logger.info("LoginHandler: success")
