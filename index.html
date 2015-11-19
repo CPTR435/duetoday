@@ -134,10 +134,11 @@
                     $('#login-modal').foundation('reveal', 'open');
                 });
 
-                // If logged in, go to the planner
+                // If logged in on the main page, go to the planner
                 if (localStorage.getItem("login") === "1") {
-                    window.location.href = "#/planner";
-
+                    if (window.location.hash == "") {
+                        window.location.href = "#/planner";
+                    }
                 // If not logged in, show login form
                 } else {
                     $('#login-modal').foundation('reveal', 'open');
