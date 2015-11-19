@@ -26,26 +26,14 @@ cd into the duetoday directory before running these commands
 4. ```git push``` will finally push all your changes to github
 
 
-## To View the Files Locally (Front-end)
-1. Make sure Python 2.7 is install
-2. cd into the duetoday directory
-3. run ```python -m SimpleHTTPServer 8000```
-4. Go to http://localhost:8000 in your favorite browser
-
-
-## To Run the Server (Back-end)
+## To Run the Server
 ```
 cd server
 python server.py
 ```
 
 The default url when running locally will be:
-*http://localhost:8888/*
-(Running on port 8888 by default)
+*http://localhost:8887/*
+(Running on port 8887 by default)
 
 Log files are stored in *server/etc/logs/*
-
-
-## Primary things to do on the server:
-1. ~~Get ASWWU authentication working~~
-2. Update server/alchemy/*_models to whatever models we may want

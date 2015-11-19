@@ -1,0 +1,32 @@
+List of handlers:
+
+Note: PUT methods do not require an ID in the URL path
+      This ID will be created and sent back to the user
+
+* indicates you must be logged in to use
+
+/login
+    - POST: send (username, password)
+
+/feed/[FEED_ID]
+    - GET: info about the feed
+    - *PUT: send (title, administrators)
+    - *POST: send (title, administrators)
+    - *DELETE: deletes the feed AND all items it contained
+
+/item/[ITEM_ID]
+    Note for POST and PUT:
+        send (repeat) to create/edit a repeating event
+    - GET: info about the item
+    - *PUT: send (feed_id, title, start, end, description)
+    - *POST: send (feed_id, title, start, end, description)
+    - *DELETE: deletes the item
+
+/feed_items/[FEED_ID]
+    - GET: returns an array of all the items in a feed
+
+/user_feeds/
+    - *GET: returns an array of feeds owned by the current user
+
+/items_by_datetime/[FEED_ID]/[START DATETIME]/[END DATETIME]
+    - GET: returns a list of items from a given feed that START between the given start and end timestamp

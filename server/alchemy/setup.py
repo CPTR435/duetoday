@@ -84,3 +84,12 @@ def dTime(string):
         return d
     except Exception as e:
         return None
+
+def query_items_by_datetime(feed_id, start, end):
+    thing = None
+    try:
+        thing = s.query(Item).filter_by(feed_id=feed_id).filter(Item.start >= start).filter(Item.start <= end).all()
+    except Exception as e:
+        logger.info(e)
+        s.rollback()
+    return thing

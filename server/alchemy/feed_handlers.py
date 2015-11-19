@@ -8,6 +8,40 @@ from alchemy.base_handlers import BaseHandler
 
 logger = logging.getLogger("pyserver")
 
+def CreateRepeatingItems(item, repeat):
+    endoftime = dTime("2016-01-01") # CHANGE THIS DATE TO SOMETIME, FAR IN THE FUTURE
+    if repeat == "Daily":
+        for t in range(1, (endoftime - item.start).days+1):
+            t = datetime.timedelta(days=t)
+            i = Item(feed_id=item.feed_id, title=item.title, creator=item.creator, description=item.description, start=(item.start+t), end=(item.end+t))
+            i = addOrUpdate(i)
+    elif repeat == "Weekday":
+        pass
+    elif repeat == "Weekly":
+        pass
+    elif repeat == "Alternateweekly":
+        pass
+    elif repeat == "Monthly":
+        pass
+    elif repeat == "Daymonthly":
+        pass
+    elif repeat == "Yearly":
+        pass
+
+def DeleteRepeatingItems(item):
+    for i in query_by_field(Item, "feed_id", item.feed_id):
+        if i.title == item.title and i.description == item.description and i.creator == item.creator and (i.updated_at - item.updated_at).seconds < 5:
+            if i != item:
+                logger.debug(i.to_json())
+                delete_thing(i)
+
+class ListUserFeedsHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        user = self.current_user
+        feeds = query_by_field(Feed, "owner", user.wwuid)
+        self.write(json.dumps([f.to_json() for f in feeds]))
+
 class FeedHandler(BaseHandler):
     def get(self, id):
         feed = query_by_id(Feed, id)
@@ -82,6 +116,11 @@ class ItemHandler(BaseHandler):
         description = self.get_argument("description", None)
         item = Item(feed_id=feed_id,title=title,creator=user.wwuid,description=description,start=start,end=end)
         item = addOrUpdate(item)
+
+        repeat = self.get_argument("repeat", None)
+        if repeat and repeat != "Once":
+            CreateRepeatingItems(item, repeat)
+
         self.write({'item': item.to_json()})
 
     @tornado.web.authenticated
@@ -104,12 +143,19 @@ class ItemHandler(BaseHandler):
             return self.write({'error':'you must give us a title and a start and an end'})
         description = self.get_argument("description", None)
 
+        DeleteRepeatingItems(item)
+
         item.feed_id = feed_id
         item.title = title
         item.description = description
         item.start = start
         item.end = end
         item = addOrUpdate(item)
+
+        repeat = self.get_argument("repeat", None)
+        if repeat and repeat != "Once":
+            CreateRepeatingItems(item, repeat)
+
         self.write({'item': item.to_json()})
 
     @tornado.web.authenticated
@@ -133,3 +179,12 @@ class ListFeedItemsHandler(BaseHandler):
             return self.write({'error':'feed does not exist'})
         items = query_by_field(Item, "feed_id", id)
         self.write(json.dumps([i.to_json() for i in items]))
+
+class ListFeedItemsByDateTimeHandler(BaseHandler):
+    def get(self, id, start, end):
+        start = dTime(start)
+        end = dTime(end)
+        feed = query_by_id(Feed, id)
+        if not feed:
+            return self.write({'error':'feed does not exist'})
+        self.write(json.dumps([i.to_json() for i in query_items_by_datetime(id,start,end)]))

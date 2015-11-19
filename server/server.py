@@ -27,6 +27,8 @@ class Application(tornado.web.Application):
             (r"/feed", FeedHandler),
             (r"/feed/(.*)", FeedHandler),
             (r"/feed_items/(.*)", ListFeedItemsHandler),
+            (r"/user_feeds", ListUserFeedsHandler),
+            (r"/items_by_datetime/(.*)/(.*)/(.*)", ListFeedItemsByDateTimeHandler),
             (r"/login", LoginHandler),
             (r"/", IndexHandler),
             (r"/(.*)", tornado.web.StaticFileHandler, {'path': '../'}),
