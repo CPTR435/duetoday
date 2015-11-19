@@ -57,7 +57,7 @@ class LoginHandler(BaseHandler):
                     logger.info("LoginHandler: error")
                     self.write({'error':'invalid login credentials'})
             except Exception as e:
-                logger.debug("LoginHandler exception: "+ str(e.message))
+                logger.debug("LoginHandler exception: "+ str(e.message)+ ", " + str(type(e)) )
                 self.write({'error': str(e.message)})
         else:
             logger.error("LoginHandler: invalid post parameters")
