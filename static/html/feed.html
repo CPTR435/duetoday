@@ -1,8 +1,99 @@
 <!-- feed.html -->
+<script src='static/fullcalendar/lib/moment.min.js'></script>
+<link type="text/css" rel=StyleSheet href = "static/planner/planner.css">
+<script>
+// For debugging
+function log(str) {
+    $("#log").append(str+"<br>")
+}
+function logJSON(json) {
+    log(JSON.stringify(json))
+}
+
+function addFeed(title, feed, description) {
+    $.ajax({
+        url: config.server+"/feed",
+        method: "PUT",
+        data: {"title": title, "feed": feed, "description": description},
+        cache: false,
+        success: function(data) {
+            logJSON(data["feed"])
+        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+            log("Status: " + textStatus + " Error: " + errorThrown);
+        }
+    })
+}
+function addItem(title, feed, description, start, end) {
+    if (end == "")
+        end = start
+
+    $.ajax({
+        url: config.server+"/item",
+        method: "PUT",
+        data: {"title": title, "feed_id": feed, "description": description, "start": start, "end": end},
+        cache: false,
+        success: function(data) {
+            window.item=data
+            logJSON(data)
+        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+            log("Status: " + textStatus + " Error: " + errorThrown);
+        }
+    })
+}
+function getFeeds() {
+    $.ajax({
+        url: config.server+"/user_feeds",
+        method: "GET",
+        cache: false,
+        dataType: "json",
+        success: function(data) {
+            for (var i=0; i < data.length; ++i) {
+                var id=data[i].id;
+                var desc=data[i].description;
+                var title=data[i].title;
+                var private=data[i].private;
+                var admin=data[i].administrators;
+                var owner=data[i].owner;
+                var id=data[i].id;
+
+                if (i==0) {
+                    addItem("Title 1", id, "Desc 1", "2015-11-02T16:00", "2015-11-03T11:00")
+                    addItem("All Day Event", id, "this is a very long all day event", "2015-11-01", "2015-11-01")
+                    addItem("Long Event", id, "This is another long event...", "2015-11-01", "2015-11-01")
+                    addItem("Repeating Event", id, "This is a repeating event with an ID of 999", "2015-11-02T16:00:00-05:00", "")
+                    addItem("Repeating Event", id, "This is the same repeating event with an ID of 999", "2015-11-03T16:00:00-05:00", "") // TODO: not really...
+                    addItem("Conference", id, "This is a conference on the eleventh", "2015-11-03", "2015-11-13")
+                    addItem("Meeting", id, "This is a meeting! Yay!", "2015-11-03T10:30:00-05:00", "2015-11-12T12:30:00-05:00")
+                    addItem("Lunch", id, "Lunch! I love lunch!!!", "2015-11-12T12:30:00-05:00", "")
+                    addItem("Meeting", id, "No Description", "2015-11-05T14:30:00-05:00", "")
+                    addItem("Happy Hour", id, "Woe is me... for I have homework", "2015-11-06T17:30:00-05:00", "")
+                    addItem("Dinner", id, "", "2015-11-12T20:00:00", "")
+                    addItem("Birthday Party", id, "", "2015-11-13T07:00:00-05:00", "")
+                    addItem("Click for Google", id, "\"Use Bing\" says the voice in your head.", "2015-11-28", "")
+                } else if (i==1) {
+                    addItem("Title 2", id, "Desc 2", "2015-11-05T00:00", "")
+                }
+            }
+            logJSON(data)
+        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+            log("Status: " + textStatus + " Error: " + errorThrown);
+        }
+    })
+}
+$(document).ready(function() {
+    $("form input[type=submit]").click(function(event){
+        event.preventDefault();
+        addFeed("Feed 1", "feed1", "Example feed");
+        addFeed("Feed 2", "feed2", "Another example feed");
+        getFeeds()
+    });
+});
+</script>
 
 <br><br>
 <div class="row">
-  <div class="small-12 columns">
-    <h1 style='text-align: center;'>This is the <b>Feeds</b></h1>
-  </div>
+  <form><input type="submit" value="Add demo data" /></form>
 </div>
+
+<div id="feeds"></div>
+<pre id="log" style="white-space: pre-wrap;"></pre>
