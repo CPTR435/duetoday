@@ -30,3 +30,6 @@ Note: PUT methods do not require an ID in the URL path
 
 /items_by_datetime/[FEED_ID]/[START DATETIME]/[END DATETIME]
     - GET: returns a list of items from a given feed that START between the given start and end timestamp
+
+/user_items_by_datetime/[START DATETIME]/[END DATETIME]
+    - GET: returns a list of items for all of user's feeds that START between the given start and end timestamp
