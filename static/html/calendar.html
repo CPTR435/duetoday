@@ -30,12 +30,18 @@ $(document).ready(function() {
 
         // Load events
 		events: {
-			url: 'events.json',
+			url: config.server+'/user_items_by_datetime/start/end',
 			error: function() {
 				$('#script-warning').show();
 			}
 		},
-		loading: function(bool) {
+        events: function(start, end, timezone, callback) {
+            $.ajax({
+                url: config.server+'/user_items_by_datetime/'+start.format()+'/'+end.format(),
+                dataType: 'json',
+                success: callback(data)
+            })
+        }, loading: function(bool) {
 			$('#loading').toggle(bool);
 		},
 
