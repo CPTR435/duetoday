@@ -5,7 +5,28 @@
 $(document).ready(function(){
 
 
-  $.ajax(
+$.ajax({
+  dataType: "json",
+  url: config.server + "/user_items_by_datetime"+"/"+moment('11-01-2015').format('MM-DD-YYYY')+"/"+moment('11-01-2015').add(6, 'days').format('MM-DD-YYYY'),
+  cache: false,
+    success: function(events){
+      window.stuff = events;
+      var info = "";
+      for (var j = 0; j < 6; j++){
+        info += "<div class ='plannerItem'><div class = \"date\">Due: " + moment('11-01-2015').add(j, 'days').format('dddd') + "</div>"
+        for (var k = 0; k < events.length; k++){
+          if(moment(events[k].start).format('dddd') == moment('11-01-2015').add(j, 'days').format('dddd')){
+            info += "<div class = \"eventName toggle\">" + events[k].title +"<i class =\"fa fa-caret-down\"></i></div>"+
+             "<div class = \"eventDetails\">" + events[k].description +"</div>";
+          }
+        }
+        info += "</div>";
+      }
+      $("#feeds").html(info);
+    }
+  });
+
+    /*$.ajax(
     {
       dataType: "json",
       url: "events.json",
@@ -36,8 +57,8 @@ $(document).ready(function(){
       }
 
 
-    });
-  });
+    });*/
+});
 </script>
-
+<div id = "feeds"></div>
 <div id = "eventDetails"></div>
