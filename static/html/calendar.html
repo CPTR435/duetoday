@@ -39,7 +39,10 @@ $(document).ready(function() {
             $.ajax({
                 url: config.server+'/user_items_by_datetime/'+start.format()+'/'+end.format(),
                 dataType: 'json',
-                success: callback(data)
+                method: 'GET',
+                success: function(data) {
+                    callback(data);
+                }
             })
         }, loading: function(bool) {
 			$('#loading').toggle(bool);
