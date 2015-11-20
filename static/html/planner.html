@@ -23,6 +23,9 @@ $.ajax({
         info += "</div>";
       }
       $("#feeds").html(info);
+      $("div.toggle").click(function(){
+          $(this).next(".eventDetails").toggle();
+      });
     }
   });
 
