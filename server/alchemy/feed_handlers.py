@@ -193,7 +193,6 @@ class ListUserItemsByDateTimeHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, start, end):
         user = self.current_user
-        feeds = query_by_field(Feed, "owner", user.wwuid)
         start = dTime(start)
         end = dTime(end)
-        self.write(json.dumps([i.to_json() for f in feeds for i in query_items_by_datetime(f.id,start,end)]))
+        self.write(json.dumps([i.to_json() for i in query_user_items_by_datetime(user.wwuid,start,end)]))

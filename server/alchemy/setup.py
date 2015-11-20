@@ -93,3 +93,12 @@ def query_items_by_datetime(feed_id, start, end):
         logger.info(e)
         s.rollback()
     return thing
+
+def query_user_items_by_datetime(wwuid, start, end):
+    thing = None
+    try:
+        thing = s.query(Item).filter_by(creator=wwuid).filter(Item.start >= start).filter(Item.start <= end).order_by(Item.start.asc()).all()
+    except Exception as e:
+        logger.info(e)
+        s.rollback()
+    return thing
