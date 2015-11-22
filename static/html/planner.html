@@ -15,7 +15,7 @@ $.ajax({
       for (var j = 0; j < 6; j++){
         info += "<div class ='plannerItem'><div class = \"date\">Due: " + moment('11-01-2015').add(j, 'days').format('dddd') + "</div>"
         for (var k = 0; k < events.length; k++){
-          if(moment(events[k].start).format('dddd') == moment('11-01-2015').add(j, 'days').format('dddd')){
+          if((moment('11-01-2015').add(j, 'days').format('DD') >= moment(events[k].start).format('DD') && moment('11-01-2015').add(j, 'days').format('DD') <= moment(events[k].end).format('DD')) || (moment('11-01-2015').add(j, 'days').format('dddd') == moment(events[k].start).format('dddd')) ){
             info += "<div class = \"eventName toggle\">" + events[k].title +"<i class =\"fa fa-caret-down\"></i></div>"+
              "<div class = \"eventDetails\">" + events[k].description +"</div>";
           }
