@@ -3,30 +3,50 @@ import logging
 import requests
 import json
 import re
+from dateutil.relativedelta import relativedelta
 from alchemy.setup import *
 from alchemy.base_handlers import BaseHandler
 
 logger = logging.getLogger("pyserver")
 
 def CreateRepeatingItems(item, repeat):
-    endoftime = dTime("2016-01-01") # CHANGE THIS DATE TO SOMETIME, FAR IN THE FUTURE
-    if repeat == "Daily":
-        for t in range(1, (endoftime - item.start).days+1):
-            t = datetime.timedelta(days=t)
-            i = Item(feed_id=item.feed_id, title=item.title, creator=item.creator, description=item.description, start=(item.start+t), end=(item.end+t))
-            i = addOrUpdate(i)
-    elif repeat == "Weekday":
-        pass
-    elif repeat == "Weekly":
-        pass
-    elif repeat == "Alternateweekly":
-        pass
-    elif repeat == "Monthly":
-        pass
-    elif repeat == "Daymonthly":
-        pass
-    elif repeat == "Yearly":
-        pass
+    endoftime = dTime("2017-02-01") # CHANGE THIS DATE TO SOMETIME, FAR IN THE FUTURE
+    def newItem(t):
+        i = Item(feed_id=item.feed_id, title=item.title, creator=item.creator, description=item.description, start=(item.start+t), end=(item.end+t))
+        i = addOrUpdate(i)
+
+    if repeat == "Yearly": # every year on the same date
+        p = 1
+        t = relativedelta(years=p)
+        while item.start + t <= endoftime:
+            newItem(t)
+            p = p+1
+            t = relativedelta(years=p)
+        return
+
+    for d in range(1, (endoftime - item.start).days+1):
+        t = datetime.timedelta(days=d)
+        if repeat == "Daily": # every day
+            newItem(t)
+        elif repeat == "Weekday": # every weekday
+            weekday = (item.start+t).weekday()
+            if weekday >= 0 and weekday <= 4:
+                newItem(t)
+        elif repeat == "Weekly": # every week
+            if t.days%7 == 0:
+                newItem(t)
+        elif repeat == "Alternateweekly": # every other week
+            if t.days%14 == 0:
+                newItem(t)
+        elif repeat == "Monthly": # first same day of the week every month
+            weekday = (item.start+t).weekday()
+            day = (item.start + t).day
+            if weekday == item.start.weekday() and day > item.start.day-7 and day < item.start.day+7:
+                newItem(t)
+        elif repeat == "Daymonthly": # same date of every month
+            day = (item.start + t).day
+            if day == item.start.day:
+                newItem(t)
 
 def DeleteRepeatingItems(item):
     for i in query_by_field(Item, "feed_id", item.feed_id):
@@ -169,6 +189,7 @@ class ItemHandler(BaseHandler):
             return self.write({'error':'feed does not exist'})
         if feed.owner != user.wwuid and user.wwuid not in feed.administrators.split(","):
             return self.write({'error':'insufficient permissions'})
+        DeleteRepeatingItems(item)
         delete_thing(item)
         self.write(json.dumps("success"))
 

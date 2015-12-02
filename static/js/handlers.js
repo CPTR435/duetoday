@@ -4,6 +4,8 @@ var main = $("#main-content");
 
 var handlers = [
 	["/calendar.*", calendarHandler],
+	["/EditItem/.*", editHandler],
+	["/NewItem", editHandler],
 	["/.*", pageHandler],
 	[".*", indexHandler]
 ];
@@ -82,4 +84,9 @@ function calendarHandler(path1, path2) {
 
     // Allow us access to this function outside of calendarHandler()
     getCalendarPath=getCalendarPathLocal;
+}
+
+function editHandler(id){
+	loader(main, "static/html/NewItem.html", function() {
+	});
 }
