@@ -3,6 +3,7 @@
 var main = $("#main-content");
 
 var handlers = [
+	["/calendar.*", calendarHandler],
 	["/.*", pageHandler],
 	[".*", indexHandler]
 ];
@@ -40,4 +41,45 @@ function pageHandler(path1, path2) {
     if (xhr.status > 400)
       window.location.href = "#";
   });
+}
+
+var getCalendarPath;
+
+function calendarHandler(path1, path2) {
+  loader(main, "static/html/calendar.html", function(xhr) {
+    if (xhr.status > 400)
+      window.location.href = "#";
+  });
+
+    // Format:
+    //   #/calendar/2015-12-25 -- Particular day
+    //   #/calendar/2015-12    -- December
+    //   #/calendar/2015-W45   -- week 48
+    function getCalendarPathLocal() {
+        // Get the path from a global variable created in handler.js
+        var view = 'month';
+        var gotoDate = moment();
+
+        if (path2 != undefined) {
+            var path = path2.split('-');
+
+            if (path.length == 2) {
+                if (path[1].substring(0,1) == 'W') {
+                    gotoDate = moment().week(path[1].substring(1))
+                    view = 'week';
+                } else {
+                    gotoDate = moment(path[1]+'/01/'+path[0])
+                    view = 'month';
+                }
+            } else if (path.length == 3) {
+                gotoDate = moment(path[1]+'/'+path[2]+'/'+path[0])
+                view = 'day';
+            }
+        }
+
+        return [view, gotoDate.format('MM/DD/YYYY')];
+    }
+
+    // Allow us access to this function outside of calendarHandler()
+    getCalendarPath=getCalendarPathLocal;
 }

@@ -2,6 +2,21 @@
 <script src='static/fullcalendar/lib/moment.min.js'></script>
 <script src='static/fullcalendar/fullcalendar.min.js'></script>
 <script>
+firstRender = true;
+addedIDs = [];
+
+// For debugging
+debug = false;
+function log(str) {
+    if (debug)
+        $("#log").append(str+"<br>")
+}
+function logJSON(json) {
+    log(JSON.stringify(json))
+}
+
+// Make sure we have propper English for displaying how many items
+// are on a particular day
 function BuildMoreLink(items) {
     if (items == 0)
         return "";
@@ -12,6 +27,10 @@ function BuildMoreLink(items) {
 }
 
 $(document).ready(function() {
+    // Gets information from the URL to determine which view we want displayed,
+    // e.g. which day to jump to
+    var gotoDate=getCalendarPath()
+
 	$('#calendar').fullCalendar({
         // Basic formatting
 		theme: true,
@@ -25,22 +44,26 @@ $(document).ready(function() {
             week: { titleFormat: 'MMM YYYY' },
             day: { titleFormat: 'MM/D/YYYY' }
         },
-		defaultDate: moment().format('MM/DD/YYYY'),
+		defaultDate: gotoDate[1],
 		editable: false,
 
         // Load events
-		events: {
-			url: config.server+'/user_items_by_datetime/start/end',
-			error: function() {
-				$('#script-warning').show();
-			}
-		},
         events: function(start, end, timezone, callback) {
             $.ajax({
                 url: config.server+'/user_items_by_datetime/'+start.format()+'/'+end.format(),
                 dataType: 'json',
                 method: 'GET',
                 success: function(data) {
+                    // Deal with the all day events being represented in the database as
+                    // from some time to 23:59:59, the end of the day.
+                    window.data=data;
+                    for (var i = 0; i < data.length; ++i) {
+                        var end = moment(data[i].end)
+                        var endOf = moment(data[i].end).endOf('day')
+                        if (end.format() == endOf.format()) {
+                            data[i].end = "";
+                        }
+                    }
                     callback(data);
                 }
             })
@@ -58,26 +81,110 @@ $(document).ready(function() {
             $('#calendar').fullCalendar('changeView', 'agendaDay');
 		},
 
+        viewRender: function(view, element) {
+            // Clear list of already-added IDs so that on each new view, since on each
+            // new view we'd want to add them again
+            addedIDs=[];
+            log("Clearing addedIDs");
+
+            // Update hash when changing days, months, etc.
+            var path;
+            if (view.name == 'month' && (!firstRender || getCalendarPath()[0] == 'month')) {
+                // Use view.title since in month view the first day may be from
+                // the previous month
+                path="#/calendar/"+moment(view.title).format("YYYY-MM");
+            } else if (view.name == 'agendaDay') {
+                path="#/calendar/"+view.start.format("YYYY-MM-DD");
+            } else if (view.name == 'agendaWeek') {
+                path="#/calendar/"+view.start.format("YYYY")+"-W"+view.start.week();
+            }
+
+            if (path != undefined)
+                window.location.hash=path;
+
+            // The calendar view is always loaded initially, so we got to keep track of
+            // if this is the initial load, and then go based on the #/calendar/.* string
+            // rather than on which view we're presently rendering. Otherwise, when you
+            // try to go to the day or week views, you get in an infinite loop going back
+            // and forth between month view.
+            firstRender = false;
+        },
+
 		// Show number of events (see: http://stackoverflow.com/a/24024204)
 		eventLimit: true, // allow "more" link when too many events
 		eventLimitText: 'More',
 		eventRender: function (event, element, view) {
+            /*if (event.title=="Conference") {
+                if (window.event_num == 0) {
+                    window.event1=event;
+                    window.element1=element;
+                    window.view1=view;
+                } else {
+                    window.event2=event;
+                    window.element2=element;
+                    window.view2=view;
+                }
+
+                ++window.event_num;
+            }*/
+
             if (view.name == 'month') {
-                var eventDateString = event.start.format("YYYY-MM-DD");
-                var $calDay = $('td.fc-day[data-date="' + eventDateString + '"]');
-                var dayEventCount = $calDay.attr('dayEventCount') ? parseInt($calDay.attr('dayEventCount')) : 0;
+                // Make sure we don't count items more than one time. This eventRender gets called
+                // twice for many events.
+                if ($.inArray(event.id, addedIDs) == -1)
+                {
+                    // Now we've added this item, so add it to the list of IDs
+                    addedIDs.push(event.id);
+                    log("Pushed "+event.id);
 
-                dayEventCount = dayEventCount + 1;
-                $calDay.attr('dayEventCount', dayEventCount);
+                    // Fixes bizarre issue where 2015-11-03T00:00:00 is detected
+                    // as "Thu Dec 17 2015 16:00:00 GMT-0800 (PST)". Even when
+                    // moment("2015-11-03T00:00:00") is the correct date.
+                    if (event.start)
+                        event.start = moment(event.start._i);
+                    if (event.end)
+                        event.end = moment(event.end._i);
 
-                var missingEvents = dayEventCount;
-                $('.moreLink', $calDay).remove();
-                // Using container to get vertical alignment
-                $moreContainer = $('<div class="moreContainer"/>');
-                $moreLink = $('<div class="moreLink"/>');
-                $moreLink.html(BuildMoreLink(missingEvents));
-                $moreContainer.html($moreLink);
-                $calDay.append($moreContainer);
+                    // Debugging
+                    if (event.start != undefined && event.end != undefined)
+                        log("Start: "+event.start.format("YYYY-MM-DD")+" End: "+event.end.format("YYYY-MM-DD")+" Title: "+event.title);
+                    else if (event.start != undefined)
+                        log("Start: "+event.start.format("YYYY-MM-DD")+" Title: "+event.title);
+                    else if (event.end != undefined)
+                        log("End: "+event.end.format("YYYY-MM-DD")+" Title: "+event.title);
+
+                    // If the end isn't specified, just do it once
+                    //var endDate = (event.end != undefined)?event.end:moment(event.start).add(1, 'days');
+                    var endDate = (event.end != undefined)?event.end:moment(event.start);
+                    endDate.add(1, 'days');
+                    var startDate = event.start;
+
+                    // Iterate over all the days during an event for multi-day events
+                    // Note that moment.add actually modifies moment, hence the s.add
+                    for (var s = startDate; s < endDate; s.add(1, 'days')) {
+                        var eventDateString = s.format("YYYY-MM-DD");
+                        var $calDay = $('td.fc-day[data-date="' + eventDateString + '"]');
+                        log(" * "+eventDateString)
+                        if ($calDay !== undefined) {
+                            var dayEventCount = $calDay.attr('dayEventCount') ? parseInt($calDay.attr('dayEventCount')) : 0;
+                            dayEventCount = dayEventCount + 1;
+                            $calDay.attr('dayEventCount', dayEventCount);
+
+                            var missingEvents = dayEventCount;
+                            $('.moreLink', $calDay).remove();
+                            // Using container to get vertical alignment
+                            $moreContainer = $('<div class="moreContainer"/>');
+                            $moreLink = $('<div class="moreLink"/>');
+                            $moreLink.html(BuildMoreLink(missingEvents));
+                            $moreContainer.html($moreLink);
+                            $calDay.append($moreContainer);
+                        } else {
+                            log("couldn't find calDay");
+                        }
+                    }
+                } else {
+                    log("Skipping "+event.id);
+                }
                 return false;
             } else if (view.name == 'agendaDay') {
                 // Show details, see: http://stackoverflow.com/a/3433826
@@ -122,6 +229,14 @@ $(document).ready(function() {
 		else
 			$('#calendar').fullCalendar('prev');
 	});
+
+    if (gotoDate[0] == 'day') {
+        $('#calendar').fullCalendar('gotoDate', gotoDate[1]);
+        $('#calendar').fullCalendar('changeView', 'agendaDay');
+    } else if (gotoDate[0] == 'week') {
+        $('#calendar').fullCalendar('gotoDate', gotoDate[1]);
+        $('#calendar').fullCalendar('changeView', 'agendaWeek');
+    }
 });
 </script>
 <style>
@@ -151,9 +266,9 @@ td.fc-day, td.fc-day-number {
 <br><br>
 <div class="row">
   <div class="small-12 columns">
-    <!--<h1 style='text-align: center;'>This is the <b>Calendar</b></h1>-->
 	<div id="script-warning" style="display: none">Note: could not load data.</div>
 	<div id='calendar'></div>
 	<div id='loading'>loading...</div>
   </div>
 </div>
+<pre id="log" style="white-space: pre-wrap;"></pre>

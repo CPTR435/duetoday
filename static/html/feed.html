@@ -27,8 +27,12 @@ function addFeed(title, feed, description, get) {
     })
 }
 function addItem(title, feed, description, start, end) {
-    if (end == "")
-        end = start
+    // Zero-length events are all-day events, and the end is zero
+    if (start == end || end == "")
+        end = moment(start).endOf('day').format()
+
+    // Set format correctly
+    start = moment(start).format()
 
     $.ajax({
         url: config.server+"/item",
@@ -61,18 +65,18 @@ function getFeeds() {
 
                 if (id==1) {
                     addItem("Title 1", id, "Desc 1", "2015-11-02T16:00", "2015-11-03T11:00")
-                    addItem("All Day Event", id, "this is a very long all day event", "2015-11-01", "2015-11-01")
-                    addItem("Long Event", id, "This is another long event...", "2015-11-01", "2015-11-01")
-                    addItem("Repeating Event", id, "This is a repeating event with an ID of 999", "2015-11-02T16:00:00-05:00", "")
-                    addItem("Repeating Event", id, "This is the same repeating event with an ID of 999", "2015-11-03T16:00:00-05:00", "") // TODO: not really...
-                    addItem("Conference", id, "This is a conference on the eleventh", "2015-11-03", "2015-11-13")
-                    addItem("Meeting", id, "This is a meeting! Yay!", "2015-11-03T10:30:00-05:00", "2015-11-12T12:30:00-05:00")
-                    addItem("Lunch", id, "Lunch! I love lunch!!!", "2015-11-12T12:30:00-05:00", "")
-                    addItem("Meeting", id, "No Description", "2015-11-05T14:30:00-05:00", "")
-                    addItem("Happy Hour", id, "Woe is me... for I have homework", "2015-11-06T17:30:00-05:00", "")
+                    addItem("All Day Event", id, "this is a very long all day event", "2015-11-01T00:00", "2015-11-01T00:00")
+                    addItem("Long Event", id, "This is another long event...", "2015-11-01T00:00", "")
+                    addItem("Repeating Event", id, "This is a repeating event with an ID of 999", "2015-11-02T16:00:00", "")
+                    addItem("Repeating Event", id, "This is the same repeating event with an ID of 999", "2015-11-03T16:00:00", "") // TODO: not really...
+                    addItem("Conference", id, "This is a conference on the eleventh", "2015-11-03T00:00", "2015-11-13T00:00")
+                    addItem("Meeting", id, "This is a meeting! Yay!", "2015-11-03T10:30:00", "2015-11-12T12:30:00")
+                    addItem("Lunch", id, "Lunch! I love lunch!!!", "2015-11-12T12:30:00", "")
+                    addItem("Meeting", id, "No Description", "2015-11-05T14:30:00", "")
+                    addItem("Happy Hour", id, "Woe is me... for I have homework", "2015-11-06T17:30:00", "")
                     addItem("Dinner", id, "", "2015-11-12T20:00:00", "")
-                    addItem("Birthday Party", id, "", "2015-11-13T07:00:00-05:00", "")
-                    addItem("Click for Google", id, "\"Use Bing\" says the voice in your head.", "2015-11-28", "")
+                    addItem("Birthday Party", id, "", "2015-11-13T07:00:00", "")
+                    addItem("Click for Google", id, "\"Use Bing\" says the voice in your head.", "2015-11-28T00:00", "")
                 } else if (id==2) {
                     addItem("Title 2", id, "Desc 2", "2015-11-05T00:00", "")
                 }
