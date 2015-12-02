@@ -3,6 +3,8 @@
 var main = $("#main-content");
 
 var handlers = [
+	["/EditItem/.*", editHandler],
+	["/NewItem", editHandler],
 	["/.*", pageHandler],
 	[".*", indexHandler]
 ];
@@ -40,4 +42,9 @@ function pageHandler(path1, path2) {
     if (xhr.status > 400)
       window.location.href = "#";
   });
+}
+
+function editHandler(id){
+	loader(main, "static/html/NewItem.html", function() {
+	});
 }
