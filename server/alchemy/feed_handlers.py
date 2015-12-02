@@ -15,9 +15,9 @@ def CreateRepeatingItems(item, repeat):
         i = Item(feed_id=item.feed_id, title=item.title, creator=item.creator, description=item.description, start=(item.start+t), end=(item.end+t))
         i = addOrUpdate(i)
 
-    if repeat == "Yearly":
-        t = relativedelta(years=1)
+    if repeat == "Yearly": # every year on the same date
         p = 1
+        t = relativedelta(years=p)
         while item.start + t <= endoftime:
             newItem(t)
             p = p+1
