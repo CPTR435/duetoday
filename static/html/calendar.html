@@ -54,14 +54,29 @@ $(document).ready(function() {
                 dataType: 'json',
                 method: 'GET',
                 success: function(data) {
-                    // Deal with the all day events being represented in the database as
-                    // from some time to 23:59:59, the end of the day.
-                    window.data=data;
+                    if (debug)
+                        window.data=data;
                     for (var i = 0; i < data.length; ++i) {
-                        var end = moment(data[i].end)
-                        var endOf = moment(data[i].end).endOf('day')
-                        if (end.format() == endOf.format()) {
+                        var start = moment(data[i].start);
+                        var startOf = moment(data[i].start).startOf('day');
+                        var end = moment(data[i].end);
+                        var endOf = moment(data[i].end).endOf('day');
+                        var endStartOf = moment(data[i].end).startOf('day');
+
+                        // Deal with the all day events being represented in the database as
+                        // from 00:00:00 to 23:59:59 of the day.
+                        if (start.format() == startOf.format() && end.format() == endOf.format()) {
+                            data[i].allDay = true;
                             data[i].end = "";
+                            // FullCalendar will not let it be an all-day event
+                            // unless we remove this part of the string
+                            data[i].start = data[i].start.replace(/T00:00:00/,'');
+
+                        // And, for events over multiple days that start and end at 00:00:00.
+                        } else if (start.format() == startOf.format() && end.format() == endStartOf.format()) {
+                            data[i].allDay = true;
+                            data[i].start = data[i].start.replace(/T00:00:00/,'');
+                            data[i].end = data[i].end.replace(/T00:00:00/,'');
                         }
                     }
                     callback(data);
