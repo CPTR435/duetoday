@@ -72,11 +72,12 @@ class FeedHandler(BaseHandler):
     @tornado.web.authenticated
     def put(self):
         title = self.get_argument("title", None)
+        description = self.get_argument("description", None)
         user = self.current_user
         if not title:
             return self.write({'error':'you must give us a title'})
         administrators = self.get_argument("administrators", None)
-        feed = Feed(title=title,owner=user.wwuid,administrators=administrators)
+        feed = Feed(title=title,owner=user.wwuid,administrators=administrators,description=description)
         feed = addOrUpdate(feed)
         self.write({'feed': feed.to_json()})
 

@@ -2,9 +2,14 @@
 <script src='static/fullcalendar/lib/moment.min.js'></script>
 <link type="text/css" rel=StyleSheet href = "static/planner/planner.css">
 <script>
+/*
+ * Add example data at the click of a button
+ */
 // For debugging
+debug=true;
 function log(str) {
-    $("#log").append(str+"<br>")
+    if (debug)
+        $("#log").append(str+"<br>")
 }
 function logJSON(json) {
     log(JSON.stringify(json))
@@ -103,24 +108,70 @@ function getItems() {
                 var owner=data[i].owner;
                 var id=data[i].id;
             }*/
-            logJSON(data)
+            //logJSON(data)
         }
     })
 }
 $(document).ready(function() {
-    getItems()
-    $("form input[type=submit]").click(function(event){
-        event.preventDefault();
-        addFeed("Feed 1", "feed1", "Example feed", false);
-        addFeed("Feed 2", "feed2", "Another example feed", true);
+    if (debug) {
+        getItems()
+        $("#debugForm").show();
+        $("#debugForm input[type=submit]").click(function(event){
+            event.preventDefault();
+            addFeed("Feed 1", "feed1", "Example feed", false);
+            addFeed("Feed 2", "feed2", "Another example feed", true);
+        });
+    }
+})
+
+/*
+ * Display the list of feeds
+ */
+function feedList() {
+    $.ajax({
+        url: config.server+"/user_feeds",
+        method: "GET",
+        cache: false,
+        dataType: "json",
+        success: function(data) {
+            var html = "";
+
+            for (var i=0; i < data.length; ++i) {
+                var id=data[i].id;
+                var desc=data[i].description;
+                var title=data[i].title;
+                var private=data[i].private;
+                var admin=data[i].administrators;
+                var owner=data[i].owner;
+                var id=data[i].id;
+
+                html += "<div class ='plannerItem'><div class = \"date\">"+title+"</div>"
+                html += "<div class = \"eventName toggle\">" + title +" &nbsp; <i class =\"fa fa-caret-down\"></i></div>"+
+                    "<div class = \"eventDetails\">" + desc +" &nbsp; <a href=\"#/EditItem/" + id + "\"><i class =\"fi-page-edit\"></i></a></div>";
+                html += "</div>";
+            }
+
+            $("#feeds").html(html);
+            $("div.toggle").click(function(){
+                $(this).next(".eventDetails").toggle();
+            });
+            logJSON(data)
+        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+            log("Status: " + textStatus + " Error: " + errorThrown);
+        }
     });
+}
+
+$(document).ready(function() {
+    feedList()
 });
 </script>
 
 <br><br>
 <div class="row">
-  <form><input type="submit" value="Add demo data" /></form>
+  <form id="debugForm" style="display:none"><input type="submit" value="Add demo data" /></form>
 </div>
 
 <div id="feeds"></div>
+<div id="eventDetails"></div>
 <pre id="log" style="white-space: pre-wrap;"></pre>
