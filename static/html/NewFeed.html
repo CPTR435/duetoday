@@ -1,0 +1,101 @@
+<script>
+// For debugging
+debug=true;
+function log(str) {
+    if (debug)
+        $("#log").append(str+"<br>")
+}
+function logJSON(json) {
+    log(JSON.stringify(json))
+}
+
+// Get the feed information from the server (if we're editing a feed)
+function getFeed(id) {
+    $.ajax({
+        url: config.server+"/feed/"+id,
+        method: "GET",
+        cache: false,
+        dataType: "json",
+        success: function(data) {
+            if (data.error == undefined) {
+                var id=data.feed.id;
+                var desc=data.feed.description;
+                var title=data.feed.title;
+                var private=data.feed.private;
+                var admin=data.feed.administrators;
+                var owner=data.feed.owner;
+
+                $("#title").val(title);
+                $("#description").val(desc);
+                $("#private").prop('checked', private=='True');
+                logJSON(data)
+            } else {
+                feedNotFound();
+            }
+        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+            log("Status: " + textStatus + " Error: " + errorThrown);
+        }
+    });
+}
+
+// Error if the feed wasn't found
+function feedNotFound() {
+    setTitle("Feed Not Found");
+    $(".padded").html("");
+}
+
+// Set the title
+function setTitle(title) {
+    $(".row h3").html(title);
+}
+
+$(document).ready(function() {
+    var feed=feedId();
+
+    // New feed
+    if (feed == undefined) {
+
+    // Edit feed
+    } else {
+        setTitle("Edit Feed");
+        getFeed(feed);
+    }
+});
+</script>
+<br><br>
+<div class="row">
+  <div class="small-12 columns">
+    <h3 style='text-align: center;'>New Feed</h3>
+  </div>
+</div>
+
+<style media="screen">
+  .padded {padding: 1em 1em 1em 1em;}
+</style>
+
+<div class="padded">
+<form>
+  <div class="row">
+    <div class="large-12 columns">
+        <input id="title" type="text" placeholder="Title" />
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>Notes</label>
+      <textarea id="description" placeholder="Enter Text"></textarea>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <input id="private" type="checkbox"> <label for="priave">Private</label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <input type="submit" value="Ok"/>
+    </div>
+  </div>
+</form>
+</div>
+<pre id="log" style="white-space: pre-wrap;"></pre>

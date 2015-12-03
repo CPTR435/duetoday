@@ -9,6 +9,7 @@
 			color: #FFFFFF;
 			font-size: large;
 			padding: 29% 0 0 0;
+        cursor: pointer;
 	}
 	</style>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -41,11 +42,9 @@
 		      </section>
 
 					<section class="right-small">
-								<a href="#/NewItem">
 										<div class="mybutton" >
                       <i class ="fa fa-plus"></i>
 									</div>
-								</a>
 					</section>
 		    </nav>
 
@@ -115,6 +114,14 @@
             // Hide menu when clicking link (more intuitive on phone)
             $(".off-canvas-list a").on("click.toggleCanvas", function(){
                 $(".exit-off-canvas").click();
+            });
+
+            // NewItem / NewFeed button
+            $(".mybutton").click(function() {
+                if (window.location.hash == "#/feed")
+                    window.location.href = "#/NewFeed";
+                else
+                    window.location.href = "#/NewItem";
             });
 
             // Login

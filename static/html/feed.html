@@ -93,24 +93,15 @@ function getFeeds() {
     })
 }
 function getItems() {
-    $.ajax({
+    /*$.ajax({
         url: config.server+"/user_items_by_datetime/2015-1-1/2016-1-1",
         method: "GET",
         cache: false,
         dataType: "json",
         success: function(data) {
-            /*for (var i=0; i < data.length; ++i) {
-                var id=data[i].id;
-                var desc=data[i].description;
-                var title=data[i].title;
-                var private=data[i].private;
-                var admin=data[i].administrators;
-                var owner=data[i].owner;
-                var id=data[i].id;
-            }*/
-            //logJSON(data)
+            logJSON(data)
         }
-    })
+    })*/
 }
 $(document).ready(function() {
     if (debug) {
