@@ -18,7 +18,7 @@ $.ajax({
         for (var k = 0; k < events.length; k++){
           if((moment('11-01-2015').add(j, 'days').format('DD') >= moment(events[k].start).format('DD') && moment('11-01-2015').add(j, 'days').format('DD') <= moment(events[k].end).format('DD')) || (moment('11-01-2015').add(j, 'days').format('dddd') == moment(events[k].start).format('dddd')) ){
             info += "<div class = \"eventName toggle\">" + events[k].title +" &nbsp; <i class =\"fa fa-caret-down\"></i></div>"+
-             "<div class = \"eventDetails\">" + events[k].description +" &nbsp; <a href=\"#/EditItem/?id=" + events[k].id + "\"><i class =\"fi-page-edit\"></i></a></div>";
+             "<div class = \"eventDetails\">" + events[k].description +" &nbsp; <a href=\"#/EditItem/" + events[k].id + "\"><i class =\"fi-page-edit\"></i></a></div>";
           }
         }
         info += "</div>";
@@ -65,4 +65,3 @@ $.ajax({
 });
 </script>
 <div id = "feeds"></div>
-<div id = "eventDetails"></div>
