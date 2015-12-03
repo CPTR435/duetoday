@@ -203,8 +203,10 @@ $(document).ready(function() {
                 return false;
             } else if (view.name == 'agendaDay') {
                 // Show details, see: http://stackoverflow.com/a/3433826
-                if (event.description !== undefined)
-                    element.find('.fc-title').append("<br/>" + event.description);
+                if (event.description !== undefined) {
+                    element.find('.fc-title').append("<br/>" + event.description +
+                            "&nbsp; <a href=\"#/EditItem/" + event.id + "\"><i class =\"fi-page-edit\"></i></a>");
+                }
             } else if (view.name == 'agendaWeek') {
             }
 
