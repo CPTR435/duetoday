@@ -1,6 +1,6 @@
 <script>
 // For debugging
-debug=true;
+debug=false;
 function log(str) {
     if (debug)
         $("#log").append(str+"<br>")
@@ -38,6 +38,58 @@ function getFeed(id) {
     });
 }
 
+// Adds a new feed
+function addFeed(title, description, private) {
+    $.ajax({
+        url: config.server+"/feed",
+        method: "PUT",
+        data: {"title": title, "description": description, "private": (private)?"1":"0"},
+        cache: false,
+        success: function(data) {
+            logJSON(data["feed"]);
+            window.location.hash = "#/feed";
+        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+            log("Status: " + textStatus + " Error: " + errorThrown);
+        }
+    })
+}
+
+// Update a feed
+function updateFeed(id, title, description, private) {
+    $.ajax({
+        url: config.server+"/feed/"+String(id),
+        method: "POST",
+        data: {"title": title, "description": description, "private": (private)?"1":"0"},
+        cache: false,
+        success: function(data) {
+            logJSON(data["feed"]);
+            window.location.hash = "#/feed";
+        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+            log("Status: " + textStatus + " Error: " + errorThrown);
+        }
+    })
+}
+
+// When the submit button is clicked, got to determine if we should
+// update or add a feed and get the data to submit.
+function submitForm() {
+    var id = feedId();
+    var title = $("#title").val();
+    var desc = $("#description").val();
+    var priv = $("#private").prop('checked');
+
+    // New feed
+    if (id == undefined) {
+        log("Adding feed: "+title+" - "+desc+" - "+priv);
+        addFeed(title, desc, priv);
+
+    // Edit feed
+    } else {
+        log("Updating feed: "+id+" - "+title+" - "+desc+" - "+priv);
+        updateFeed(id, title, desc, priv);
+    }
+}
+
 // Error if the feed wasn't found
 function feedNotFound() {
     setTitle("Feed Not Found");
@@ -60,6 +112,19 @@ $(document).ready(function() {
         setTitle("Edit Feed");
         getFeed(feed);
     }
+
+    // Make the submit button not actually submit the form but
+    // send data to the server via AJAX
+    $("form").submit(function(event) {
+        event.preventDefault();
+        submitForm();
+        return false;
+    });
+
+    // Cancel button goes back to the feeds page
+    $("form input[value=Cancel]").click(function() {
+        window.location.hash="#/feed";
+    });
 });
 </script>
 <br><br>
@@ -93,7 +158,8 @@ $(document).ready(function() {
   </div>
   <div class="row">
     <div class="large-12 columns">
-      <input type="submit" value="Ok"/>
+      <input class="button" type="submit" value="Ok"/>
+      <input class="button" type="button" value="Cancel"/>
     </div>
   </div>
 </form>

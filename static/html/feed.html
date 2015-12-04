@@ -6,7 +6,7 @@
  * Add example data at the click of a button
  */
 // For debugging
-debug=true;
+debug=false;
 function log(str) {
     if (debug)
         $("#log").append(str+"<br>")
@@ -15,11 +15,13 @@ function logJSON(json) {
     log(JSON.stringify(json))
 }
 
-function addFeed(title, feed, description, get) {
+// This is different from the on on the NewFeed page since we have to call
+// the getFeeds() on success.
+function addFeed(title, description, private, get) {
     $.ajax({
         url: config.server+"/feed",
         method: "PUT",
-        data: {"title": title, "feed": feed, "description": description},
+        data: {"title": title, "description": description, "private": (private)?"1":"0"},
         cache: false,
         success: function(data) {
             logJSON(data["feed"])
@@ -109,8 +111,8 @@ $(document).ready(function() {
         $("#debugForm").show();
         $("#debugForm input[type=submit]").click(function(event){
             event.preventDefault();
-            addFeed("Feed 1", "feed1", "Example feed", false);
-            addFeed("Feed 2", "feed2", "Another example feed", true);
+            addFeed("Feed 1", "Example feed", true, false);
+            addFeed("Feed 2", "Another example feed", true, true);
         });
     }
 })
@@ -138,7 +140,7 @@ function feedList() {
 
                 html += "<div class ='plannerItem'><div class = \"date\">"+title+"</div>"
                 html += "<div class = \"eventName toggle\">" + title +" &nbsp; <i class =\"fa fa-caret-down\"></i></div>"+
-                    "<div class = \"eventDetails\">" + desc +" &nbsp; <a href=\"#/EditItem/" + id + "\"><i class =\"fi-page-edit\"></i></a></div>";
+                    "<div class = \"eventDetails\">" + desc +" &nbsp; <a href=\"#/EditFeed/" + id + "\"><i class =\"fi-page-edit\"></i></a></div>";
                 html += "</div>";
             }
 
