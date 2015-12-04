@@ -70,6 +70,22 @@ function updateFeed(id, title, description, private) {
     })
 }
 
+// Delete a feed
+function delFeed(id) {
+    $.ajax({
+        url: config.server+"/feed/"+String(id),
+        method: "DELETE",
+        data: {"id": String(id)},
+        cache: false,
+        success: function(data) {
+            logJSON(data);
+            window.location.hash = "#/feed";
+        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+            log("Status: " + textStatus + " Error: " + errorThrown);
+        }
+    })
+}
+
 // When the submit button is clicked, got to determine if we should
 // update or add a feed and get the data to submit.
 function submitForm() {
@@ -125,6 +141,12 @@ $(document).ready(function() {
     $("form input[value=Cancel]").click(function() {
         window.location.hash="#/feed";
     });
+
+    // Delete button
+    $("form input[value=Delete]").click(function() {
+        // TODO: confirmation box
+        delFeed(feedId());
+    });
 });
 </script>
 <br><br>
@@ -157,9 +179,12 @@ $(document).ready(function() {
     </div>
   </div>
   <div class="row">
-    <div class="large-12 columns">
+    <div class="large-6 columns">
       <input class="button" type="submit" value="Ok"/>
       <input class="button" type="button" value="Cancel"/>
+    </div>
+    <div class="large-6 columns">
+      <input class="button" type="button" value="Delete"/>
     </div>
   </div>
 </form>

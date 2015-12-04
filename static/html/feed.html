@@ -139,8 +139,11 @@ function feedList() {
                 var id=data[i].id;
 
                 html += "<div class ='plannerItem'><div class = \"date\">"+title+"</div>"
-                html += "<div class = \"eventName toggle\">" + title +" &nbsp; <i class =\"fa fa-caret-down\"></i></div>"+
-                    "<div class = \"eventDetails\">" + desc +" &nbsp; <a href=\"#/EditFeed/" + id + "\"><i class =\"fi-page-edit\"></i></a></div>";
+                html += "<div class = \"eventName toggle\">" + title +" &nbsp; <i class =\"fa fa-caret-down\"></i></div>"
+                    +"<div class = \"eventDetails\">" + desc +" &nbsp; "
+                    +"<a href=\"#/EditFeed/" + id + "\"><i class =\"fi-page-edit\"></i></a> "
+                    //+"<a href=\"#/EditFeed/" + id + "\"><i class =\"fi-page-delete\"></i></a>"
+                    +"</div>"
                 html += "</div>";
             }
 
