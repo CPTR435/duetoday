@@ -6,6 +6,8 @@ var handlers = [
 	["/calendar.*", calendarHandler],
 	["/EditItem/.*", editHandler],
 	["/NewItem", editHandler],
+	["/EditFeed/.*", feedHandler],
+	["/NewFeed", feedHandler],
 	["/.*", pageHandler],
 	[".*", indexHandler]
 ];
@@ -85,6 +87,7 @@ function calendarHandler(path1, path2) {
     // Allow us access to this function outside of calendarHandler()
     getCalendarPath=getCalendarPathLocal;
 }
+
 var getIdent;
 function editHandler(id){
 	loader(main, "static/html/NewItem.html", function() {
@@ -94,4 +97,13 @@ function editHandler(id){
 		return ident;
 	}
 	getIdent = getID;
+}
+
+var feedId;
+function feedHandler(id) {
+	loader(main, "static/html/NewFeed.html", function() {});
+	function getID() {
+		return id;
+	}
+	feedId = getID;
 }
