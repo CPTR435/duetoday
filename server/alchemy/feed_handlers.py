@@ -73,17 +73,20 @@ class FeedHandler(BaseHandler):
     def put(self):
         title = self.get_argument("title", None)
         description = self.get_argument("description", None)
+        private = self.get_argument("private", True)
         user = self.current_user
         if not title:
             return self.write({'error':'you must give us a title'})
         administrators = self.get_argument("administrators", None)
-        feed = Feed(title=title,owner=user.wwuid,administrators=administrators,description=description)
+        feed = Feed(title=title,owner=user.wwuid,administrators=administrators,description=description,private=private)
         feed = addOrUpdate(feed)
         self.write({'feed': feed.to_json()})
 
     @tornado.web.authenticated
     def post(self, id):
         title = self.get_argument("title", None)
+        description = self.get_argument("description", None)
+        private = self.get_argument("private", True)
         user = self.current_user
         if not title:
             return self.write({'error':'you must give us a title'})
@@ -94,6 +97,8 @@ class FeedHandler(BaseHandler):
             return self.write({'error':'insufficient permissions'})
         administrators = self.get_argument("administrators", None)
         feed.title = title
+        feed.description = description
+        feed.private = private
         feed.administrators = administrators
         feed = addOrUpdate(feed)
         self.write({'feed': feed.to_json()})
