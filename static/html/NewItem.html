@@ -10,13 +10,17 @@ $(document).ready(function(){
       success:function(item){
         window.items = item;
         if(getIdent() != undefined){
-          $("#title").html("<input type=\"text\" placeholder=\"Title\" value = \""+ item.item.title +"\" />")
+          $("#title").html("<input type=\"text\" placeholder=\"Title\" value = \""+ item.item.title +"\" />");
           $("#location").html("<input type=\"text\" placeholder=\"Location\" value = \""+ item.item.location +"\" />");
           //$("#start").val(moment(item.item.start).format("MM-DD-YYYY HH:mm"));
           //$("#start").html("value=\""+ moment(item.item.start).format("MM-DD-YYYY HH:mm") +"\"");
+          $("#descrip").html("<textarea placeholder=\"Enter Description\">"+ item.item.description +"</textarea>");
+          $("#pageTitle").html("Edit Item");
 
         } else{
-          $("#title").html("<input type=\"text\" placeholder=\"Title\" />")
+          $("#title").html("<input type=\"text\" placeholder=\"Title\" />");
+          $("#descrip").html("<textarea placeholder=\"Enter Description\"></textarea>");
+          $("#pageTitle").html("New Item");
         }
 
       }
@@ -27,7 +31,7 @@ $(document).ready(function(){
 <br><br>
 <div class="row">
   <div class="small-12 columns">
-    <h3 style='text-align: center;'>New Event</h3>
+    <h3 style='text-align: center;'><div id = "pageTitle"></div></h3>
   </div>
 </div>
 
@@ -89,7 +93,7 @@ $(document).ready(function(){
   <div class="row">
     <div class="large-12 columns">
       <label>Notes
-        <textarea placeholder="Enter Text"></textarea>
+        <div id = "descrip"></div>
       </label>
     </div>
   </div>
