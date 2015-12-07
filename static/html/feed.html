@@ -139,18 +139,12 @@ function feedList() {
                 var id=data[i].id;
 
                 html += "<div class ='plannerItem'><div class = \"date\">"+title+"</div>"
-                html += "<div class = \"eventName toggle\">" + title +" &nbsp; <i class =\"fa fa-caret-down\"></i></div>"
-                    +"<div class = \"eventDetails\">" + desc +" &nbsp; "
-                    +"<a href=\"#/EditFeed/" + id + "\"><i class =\"fi-page-edit\"></i></a> "
-                    //+"<a href=\"#/EditFeed/" + id + "\"><i class =\"fi-page-delete\"></i></a>"
-                    +"</div>"
-                html += "</div>";
+                html += "<div class = \"eventName toggle\">" + desc + " "
+                  +"<a href=\"#/EditFeed/" + id + "\"><i class =\"fi-page-edit\"></i></a>"
+                  +"</div></div>"
             }
 
             $("#feeds").html(html);
-            $("div.toggle").click(function(){
-                $(this).next(".eventDetails").toggle();
-            });
             logJSON(data)
         }, error: function(XMLHttpRequest, textStatus, errorThrown) {
             log("Status: " + textStatus + " Error: " + errorThrown);
@@ -162,11 +156,7 @@ $(document).ready(function() {
     feedList()
 });
 </script>
-
-<br><br>
-<div class="row">
-  <form id="debugForm" style="display:none"><input type="submit" value="Add demo data" /></form>
-</div>
+<form id="debugForm" style="display:none"><input type="submit" value="Add demo data" /></form>
 
 <div id="feeds"></div>
 <div id="eventDetails"></div>

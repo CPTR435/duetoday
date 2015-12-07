@@ -144,7 +144,16 @@ $(document).ready(function() {
 
     // Delete button
     $("form input[value=Delete]").click(function() {
-        // TODO: confirmation box
+        $('#delete-modal').foundation('reveal', 'open');
+    });
+
+    // Cancel button
+    $("form input[value=Delete]").click(function() {
+        $('#delete-modal').foundation('reveal', 'open');
+    });
+
+    // Permenantly delete button
+    $("form input[value=Delete]").click(function() {
         delFeed(feedId());
     });
 });
@@ -184,9 +193,17 @@ $(document).ready(function() {
       <input class="button" type="button" value="Cancel"/>
     </div>
     <div class="large-6 columns">
-      <input class="button" type="button" value="Delete"/>
+      <input id="deleteButton" class="button right" type="button" value="Delete"/>
     </div>
   </div>
 </form>
 </div>
 <pre id="log" style="white-space: pre-wrap;"></pre>
+<div id='delete-modal' class='reveal-modal' data-reveal data-options="close_on_background_click:false;close_on_esc:false;">
+    <div class="title">Confirm Deletion</div>
+    <p>Are you <i>absolutely positively</i> sure you <i>really, really</i> want to delete this? This will delete the <b>feed</b> and <b>all events</b> on that feed.</p>
+    <form>
+    <input id="permenantDelete" class="button" type="button" value="Delete"/>
+    <input id="cancelButton" class="button" type="button" value="Cancel"/>
+    </form>
+</div>
