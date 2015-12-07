@@ -127,8 +127,6 @@ function feedList() {
         cache: false,
         dataType: "json",
         success: function(data) {
-            var html = "";
-
             for (var i=0; i < data.length; ++i) {
                 var id=data[i].id;
                 var desc=data[i].description;
@@ -138,13 +136,16 @@ function feedList() {
                 var owner=data[i].owner;
                 var id=data[i].id;
 
-                html += "<div class ='plannerItem'><div class = \"date\">"+title+"</div>"
-                html += "<div class = \"eventName toggle\">" + desc + " "
-                  +"<a href=\"#/EditFeed/" + id + "\"><i class =\"fi-page-edit\"></i></a>"
-                  +"</div></div>"
+                // Create HTML escaping properly
+                var itemDiv = $("<div class ='plannerItem'></div>")
+                var titleDiv = $("<div class='date'></div>")
+                var descDiv  = $("<div class='eventName'></div>")
+                titleDiv.text(title);
+                descDiv.text(desc);
+                descDiv.append($("<a href=\"#/EditFeed/"+id+"\"> <i class =\"fi-page-edit\"></i></a>"));
+                $('#feeds').append(itemDiv.append(titleDiv, descDiv))
             }
 
-            $("#feeds").html(html);
             logJSON(data)
         }, error: function(XMLHttpRequest, textStatus, errorThrown) {
             log("Status: " + textStatus + " Error: " + errorThrown);
