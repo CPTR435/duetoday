@@ -28,9 +28,11 @@ class Item(Base):
     feed_id = Column(Integer, ForeignKey("feeds.id"), nullable=False)
     title = Column(String(250), nullable=False)
     description = Column(String(250))
+    location = Column(String(500))
+    repeat = Column(String(250))
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
     creator = Column(Integer, ForeignKey("users.wwuid"), nullable=False)
     updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
     def to_json(self):
-        return {'id': str(self.id), 'feed_id': str(self.feed_id), 'title': str(self.title), 'description': str(self.description), 'start': str(self.start.strftime("%Y-%m-%dT%H:%M:%S")), 'end': str(self.end.strftime("%Y-%m-%dT%H:%M:%S")), 'creator': str(self.creator), 'updated_at': str(self.updated_at)}
+        return {'id': str(self.id), 'feed_id': str(self.feed_id), 'title': str(self.title), 'description': str(self.description), 'location': str(self.location), 'repeat': str(self.repeat), 'start': str(self.start.strftime("%Y-%m-%dT%H:%M:%S")), 'end': str(self.end.strftime("%Y-%m-%dT%H:%M:%S")), 'creator': str(self.creator), 'updated_at': str(self.updated_at)}

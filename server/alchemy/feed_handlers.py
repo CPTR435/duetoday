@@ -12,7 +12,7 @@ logger = logging.getLogger("pyserver")
 def CreateRepeatingItems(item, repeat):
     endoftime = dTime("2017-02-01") # CHANGE THIS DATE TO SOMETIME, FAR IN THE FUTURE
     def newItem(t):
-        i = Item(feed_id=item.feed_id, title=item.title, creator=item.creator, description=item.description, start=(item.start+t), end=(item.end+t))
+        i = Item(feed_id=item.feed_id, title=item.title, creator=item.creator, description=item.description, location=item.location, repeat=item.repeat, start=(item.start+t), end=(item.end+t))
         i = addOrUpdate(i)
 
     if repeat == "Yearly": # every year on the same date
@@ -50,7 +50,7 @@ def CreateRepeatingItems(item, repeat):
 
 def DeleteRepeatingItems(item):
     for i in query_by_field(Item, "feed_id", item.feed_id):
-        if i.title == item.title and i.description == item.description and i.creator == item.creator and (i.updated_at - item.updated_at).seconds < 5:
+        if i.title == item.title and i.description == item.description and i.location == item.location and i.repeat == item.repeat and i.creator == item.creator and (i.updated_at - item.updated_at).seconds < 5:
             if i != item:
                 logger.debug(i.to_json())
                 delete_thing(i)
@@ -140,7 +140,9 @@ class ItemHandler(BaseHandler):
         if not title or not start or not end:
             return self.write({'error':'you must give us a title and a start and an end'})
         description = self.get_argument("description", None)
-        item = Item(feed_id=feed_id,title=title,creator=user.wwuid,description=description,start=start,end=end)
+        location = self.get_argument("location", None)
+        repeat = self.get_argument("repeat", None)
+        item = Item(feed_id=feed_id,title=title,creator=user.wwuid,description=description,location=location,repeat=repeat,start=start,end=end)
         item = addOrUpdate(item)
 
         repeat = self.get_argument("repeat", None)
@@ -168,12 +170,16 @@ class ItemHandler(BaseHandler):
         if not title or not start or not end:
             return self.write({'error':'you must give us a title and a start and an end'})
         description = self.get_argument("description", None)
+        location = self.get_argument("location", None)
+        repeat = self.get_argument("repeat", None)
 
         DeleteRepeatingItems(item)
 
         item.feed_id = feed_id
         item.title = title
         item.description = description
+        item.location = location
+        item.repeat = repeat
         item.start = start
         item.end = end
         item = addOrUpdate(item)
