@@ -94,6 +94,7 @@
 		<script type="text/javascript" src="static/js/handlers.js"></script>
 		<script type="text/javascript" src="static/js/general.js"></script>
         <script type="text/javascript" src="static/js/hammer.min.js"></script>
+        <script type="text/javascript" src="static/js/confirm_with_reveal.js"></script>
         <script type="text/javascript" src="static/datetimepicker/js/date.js"></script>
         <script type="text/javascript" src="static/datetimepicker/helpers/date-helpers.js"></script>
         <script type="text/javascript" src="static/datetimepicker/helpers/string-helpers.js"></script>
@@ -109,7 +110,10 @@
 
         // Note: kind of a mess at the moment...
         $(document).ready(function() {
+            // Initialize Foundation
             $(document).foundation(function() {});
+            // Initialize confirm box
+            $(document).confirmWithReveal();
 
             // Hide menu when clicking link (more intuitive on phone)
             $(".off-canvas-list a").on("click.toggleCanvas", function(){

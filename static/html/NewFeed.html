@@ -9,6 +9,9 @@ function logJSON(json) {
     log(JSON.stringify(json))
 }
 
+// Whether we clicked delete, so we know not to recreate it on form submission
+deleted = false;
+
 // Get the feed information from the server (if we're editing a feed)
 function getFeed(id) {
     $.ajax({
@@ -72,6 +75,7 @@ function updateFeed(id, title, description, private) {
 
 // Delete a feed
 function delFeed(id) {
+    deleted = true;
     $.ajax({
         url: config.server+"/feed/"+String(id),
         method: "DELETE",
@@ -89,6 +93,10 @@ function delFeed(id) {
 // When the submit button is clicked, got to determine if we should
 // update or add a feed and get the data to submit.
 function submitForm() {
+    // Don't continue if we deleted this already
+    if (deleted)
+        return;
+
     var id = feedId();
     var title = $("#title").val();
     var desc = $("#description").val();
@@ -122,7 +130,8 @@ $(document).ready(function() {
 
     // New feed
     if (feed == undefined) {
-
+        // Don't show the delete button when creating a new feed
+        $("form input[value=Delete]").hide();
     // Edit feed
     } else {
         setTitle("Edit Feed");
@@ -142,19 +151,11 @@ $(document).ready(function() {
         window.location.hash="#/feed";
     });
 
-    // Delete button
-    $("form input[value=Delete]").click(function() {
-        $('#delete-modal').foundation('reveal', 'open');
-    });
-
-    // Cancel button
-    $("form input[value=Delete]").click(function() {
-        $('#delete-modal').foundation('reveal', 'open');
-    });
-
-    // Permenantly delete button
-    $("form input[value=Delete]").click(function() {
+    // Delete on confirm
+    $(document).on('confirm.reveal', '[data-confirm]', function() {
+        $('.reveal-modal').foundation('reveal', 'close');
         delFeed(feedId());
+        return false;
     });
 });
 </script>
@@ -193,17 +194,9 @@ $(document).ready(function() {
       <input class="button" type="button" value="Cancel"/>
     </div>
     <div class="large-6 columns">
-      <input id="deleteButton" class="button right" type="button" value="Delete"/>
+      <input class="button right" type="button" data-confirm value="Delete"/>
     </div>
   </div>
 </form>
 </div>
 <pre id="log" style="white-space: pre-wrap;"></pre>
-<div id='delete-modal' class='reveal-modal' data-reveal data-options="close_on_background_click:false;close_on_esc:false;">
-    <div class="title">Confirm Deletion</div>
-    <p>Are you <i>absolutely positively</i> sure you <i>really, really</i> want to delete this? This will delete the <b>feed</b> and <b>all events</b> on that feed.</p>
-    <form>
-    <input id="permenantDelete" class="button" type="button" value="Delete"/>
-    <input id="cancelButton" class="button" type="button" value="Cancel"/>
-    </form>
-</div>
