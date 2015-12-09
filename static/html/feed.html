@@ -6,7 +6,7 @@
  * Add example data at the click of a button
  */
 // For debugging
-debug=false;
+debug=true;
 function log(str) {
     if (debug)
         $("#log").append(str+"<br>")
@@ -80,10 +80,10 @@ function getFeeds() {
                     addItem("Meeting", id, "This is a meeting! Yay!", "2015-11-03T10:30:00", "2015-11-12T12:30:00")
                     addItem("Lunch", id, "Lunch! I love lunch!!!", "2015-11-12T12:30:00", "")
                     addItem("Meeting", id, "No Description", "2015-11-05T14:30:00", "")
-                    addItem("Happy Hour", id, "Woe is me... for I have homework", "2015-11-06T17:30:00", "")
+                    addItem("<b>Happy Hour</b>", id, "<i>Woe is me... for I have homework</i>", "2015-11-06T17:30:00", "")
                     addItem("Dinner", id, "", "2015-11-12T20:00:00", "")
                     addItem("Birthday Party", id, "", "2015-11-13T07:00:00", "")
-                    addItem("Click for Google", id, "\"Use Bing\" says the voice in your head.", "2015-11-28T00:00", "")
+                    addItem("Click for <a href='https://google.com'>Google</a>", id, "\"Use Bing\" says the voice in your head.", "2015-11-28T00:00", "")
                 } else if (id==2) {
                     addItem("Title 2", id, "Desc 2", "2015-11-05T00:00", "")
                 }
