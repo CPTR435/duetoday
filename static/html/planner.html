@@ -15,16 +15,20 @@ $.ajax({
       var info = "";
       //this section loops through all of the events to display each one on the correct day9
       for (var j = 0; j < 6; j++){
-        info += "<div class ='plannerItem'><div class = \"date\">Due: " + moment('11-01-2015').add(j, 'days').format('dddd') + "</div>"
+        var plannerItem = $("<div class='plannerItem'><div class='date'>Due: " + moment('11-01-2015').add(j, 'days').format('dddd') + "</div></div>");
         for (var k = 0; k < events.length; k++){
           if((moment('11-01-2015').add(j, 'days').format('DD') >= moment(events[k].start).format('DD') && moment('11-01-2015').add(j, 'days').format('DD') <= moment(events[k].end).format('DD')) || (moment('11-01-2015').add(j, 'days').format('dddd') == moment(events[k].start).format('dddd')) ){
-            info += "<div class = \"eventName toggle\">" + events[k].title +" &nbsp; <i class =\"fa fa-caret-down\"></i></div>"+
-             "<div class = \"eventDetails\">" + events[k].description +" &nbsp; <a href=\"#/EditItem/" + events[k].id + "\"><i class =\"fi-page-edit\"></i></a></div>";
+              var eventName = $("<div class='eventName toggle'></div>");
+              eventName.text(events[k].title);
+              eventName.append(" &nbsp; <i class =\"fa fa-caret-down\"></i>");
+              var eventDetails = $("<div class='eventDetails'></div>");
+              eventDetails.text(events[k].description);
+              eventDetails.append(" &nbsp; <a href=\"#/EditItem/" + events[k].id + "\"><i class =\"fi-page-edit\"></i></a>");
+              plannerItem.append(eventName, eventDetails);
           }
         }
-        info += "</div>";
+        $("#feeds").append(plannerItem);
       }
-      $("#feeds").html(info);
       $("div.toggle").click(function(){
           $(this).next(".eventDetails").toggle();
       });
