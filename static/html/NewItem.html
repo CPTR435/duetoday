@@ -75,16 +75,10 @@ function submitForm() {
     var desc = $("#descrip").val();
     var repeat = $("#repeat").val();
 
-    ////////////////////////////////////////////////////
-    //was trying to force a date because the date time picker isn't working, this will need ot be changed
 
-    var start = "12/12/15";//$("#start").val();//$("#start").val();
-    var end = "";//$("#end").val();
-    //var start = moment("12/10/15").format('MM-DD-YYYY');
     var start = $("#start").val();
     //var end = "";
     var end = $("#end").val();
-    ///////////////////////////////////////////////////
 
     // New item
     if (id == undefined) {
@@ -107,10 +101,10 @@ function week_of_month(date) {
 
 function updateSelect(){
   var start = moment($("#start").val())
-  var monthly1 = "every "+week_of_month(start)+ " "+start.format('dddd');
-  var monthly2 = "(on day " + start.date() + ")";
-  $("#monthly1").val(monthly1);
-  $("#monthly2").val(monthly2);
+  var monthly1 = "Monthly (every "+ String(week_of_month(start))+ " "+start.format('dddd')+")";
+  var monthly2 = "Monthly (on day " + String(start.date()) + ")";
+  $("#monthly1").text(monthly1);
+  $("#monthly2").text(monthly2);
 
 
 }
@@ -121,10 +115,10 @@ function loadCalendar() {
 }
 
 $(document).ready(function(){
-  updateSelect();
   $("#start").on("change",function(){
     updateSelect();
   });
+  $("#start").on("dateChange",updateSelect);
   if (getIdent() != undefined){
     $.ajax({
       dataType: "json",
@@ -134,13 +128,12 @@ $(document).ready(function(){
           window.items = item;
             $("#title").val(item.item.title);
             $("#location").val(item.item.location);
-          //  $("#start").val(moment(item.item.start).format("MM-DD-YYYY HH:mm"));
-            //$("#start").html("value=\""+ moment(item.item.start).format("MM-DD-YYYY HH:mm") +"\"");
             $("#start").val(moment(item.item.start).format("MM-DD-YYYY HH:mm"));
             $("#end").val(moment(item.item.end).format("MM-DD-YYYY HH:mm"));
             $("#descrip").val(item.item.description);
             $("#pageTitle").html("Edit Item");
             loadCalendar();
+            updateSelect();
         }
     });
   }
@@ -154,6 +147,7 @@ $(document).ready(function(){
 
       // Initialize the date-time picker
       loadCalendar();
+      updateSelect();
     }
 
 
@@ -230,8 +224,8 @@ $(document).ready(function(){
           <option type="radio" value="Weekday">Every weekday (Mon-Fri)</option>
           <option type="radio" value="Weekly">Weekly</option>
           <option type="radio" value="Alternateweekly">Every 2 weeks</option>
-          <option type="radio" value="Monthly">Monthly <div id = "monthly1"></div> </option/>
-          <option type="radio" value="Daymonthly">Monthly <div id = "monthly2"></div></option>
+          <option type="radio" value="Monthly" id = "monthly1"></option/>
+          <option type="radio" value="Daymonthly" id = "monthly2"></option>
           <option type="radio" value="Yearly">Yearly</option>
         </select>
       </label>
