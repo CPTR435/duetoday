@@ -1,5 +1,3 @@
-<!-- forum.html -->
-
 <script src='static/fullcalendar/lib/moment.min.js'></script>
 <script type="text/javascript" src="static/datetimepicker/foundation_calendar.js"></script>
 <script>
@@ -79,9 +77,9 @@ function submitForm() {
     ////////////////////////////////////////////////////
     //was trying to force a date because the date time picker isn't working, this will need ot be changed
     //var start = moment("12/10/15").format('MM-DD-YYYY');
-    $("#start").val();
+    var start = $("#start").val();
     //var end = "";
-    $("#end").val();
+    var end = $("#end").val();
     ///////////////////////////////////////////////////
 
     // New item
@@ -126,6 +124,11 @@ $(document).ready(function(){
       $("#title").html();
       $("#descrip").val();
       $("#pageTitle").html("New Item");
+
+      // Don't show the delete button when creating a new feed
+      $("form input[value=Delete]").hide();
+
+      // Initialize the date-time picker
       loadCalendar();
     }
 
@@ -142,10 +145,10 @@ $(document).ready(function(){
         window.location.hash="#/planner";
     });
 
-    // Delete on confirm
-    $(document).on('confirm.reveal', '[data-confirm]', function() {
-        $('.reveal-modal').foundation('reveal', 'close');
+    // Delete on confirm; off to remove the one from the feeds page if set
+    $(document).off('confirm.reveal').on('confirm.reveal', '[data-confirm]', function() {
         delItem(getIdent());
+        $('.reveal-modal').foundation('reveal', 'close');
         return false;
     });
 
@@ -209,17 +212,21 @@ $(document).ready(function(){
   <div class="row">
     <div class="large-12 columns">
       <label>Notes
-        <textarea placeholder="Enter Description" id = "descrip"></textarea>"
+        <textarea placeholder="Enter Description" id = "descrip"></textarea>
       </label>
     </div>
-    <div class="large-6 columns">
+  </div>
+
+  <div class="row">
+    <div class="large-6 small-6 columns">
       <input class="button" type="submit" value="Ok"/>
       <input class="button" type="button" value="Cancel"/>
     </div>
-    <div class="large-6 columns">
-      <input class="button right" type="button" data-confirm value="Delete"/>
+    <div class="large-6 small-6 columns">
+        <input class="button right" type="button" data-confirm='{"title":"Are you sure?","body":"Are you sure you want to delete this event?","ok":"Delete the event!"}' value="Delete"/>
     </div>
   </div>
 
 </form>
 </div>
+<pre id="log" style="white-space: pre-wrap;"></pre>

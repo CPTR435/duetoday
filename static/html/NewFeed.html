@@ -154,8 +154,8 @@ $(document).ready(function() {
         window.location.hash="#/feed";
     });
 
-    // Delete on confirm
-    $(document).on('confirm.reveal', '[data-confirm]', function() {
+    // Delete on confirm; off to remove the one from the items page if set
+    $(document).off('confirm.reveal').on('confirm.reveal', '[data-confirm]', function() {
         delFeed(feedId());
         $('.reveal-modal').foundation('reveal', 'close');
         return false;
