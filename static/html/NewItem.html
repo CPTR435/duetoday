@@ -100,6 +100,22 @@ function submitForm() {
     }
 }
 
+function week_of_month(date) {
+
+        prefixes = ["first","second","third","fourth","fifth"];
+    return prefixes[0 | date.date() / 7];
+
+}
+
+function updateSelect(){
+  var start = moment($("#start").val())
+  var monthly1 = "every "+week_of_month(start)+ " "+start.format('dddd');
+  var monthly2 = "(on day " + start.date() + ")";
+  $("#monthly1").val(monthly1);
+  $("#monthly2").val(monthly2);
+
+
+}
 // We want to do this after we set the initial values, so we've moved this here from
 // foundation_calendar.js
 function loadCalendar() {
@@ -107,6 +123,10 @@ function loadCalendar() {
 }
 
 $(document).ready(function(){
+  updateSelect();
+  $("#start").on("change",function(){
+    updateSelect();
+  });
   if (getIdent() != undefined){
     $.ajax({
       dataType: "json",
@@ -132,6 +152,8 @@ $(document).ready(function(){
       $("#pageTitle").html("New Item");
       loadCalendar();
     }
+
+
 
     // Make the submit button not actually submit the form but
     // send data to the server via AJAX
@@ -203,11 +225,11 @@ $(document).ready(function(){
           <option type="radio" value="Once">One-time event</option>
           <option type="radio" value="Daily">Daily</option>
           <option type="radio" value="Weekday">Every weekday (Mon-Fri)</option>
-          <option type="radio" value="Weekly">Weekly (every Thursday)</option>
-          <option type="radio" value="Alternateweekly">Every 2 weeks (Thursday)</option>
-          <option type="radio" value="Monthly">Monthly (every first Thursday)</option/>
-          <option type="radio" value="Daymonthly">Monthly (on day 5)</option>
-          <option type="radio" value="Yearly">Yearly (on November 5)</option>
+          <option type="radio" value="Weekly">Weekly</option>
+          <option type="radio" value="Alternateweekly">Every 2 weeks</option>
+          <option type="radio" value="Monthly">Monthly <div id = "monthly1"></div> </option/>
+          <option type="radio" value="Daymonthly">Monthly <div id = "monthly2"></div></option>
+          <option type="radio" value="Yearly">Yearly</option>
         </select>
       </label>
     </div>
