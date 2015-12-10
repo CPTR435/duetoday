@@ -17,7 +17,7 @@ function addItem(title, description, location, start, end) {
     $.ajax({
         url: config.server+"/item",
         method: "PUT",
-        data: {"title": title, "description": description, "location": location, "start": start, "end": end},
+        data: {"feed_id": '1', "title": title, "description": description, "location": location, "start": start, "end": end},
         cache: false,
         success: function(data) {
             logJSON(data["item"]);
@@ -33,7 +33,7 @@ function updateItem(id, title, description, location, start, end) {
     $.ajax({
         url: config.server+"/item/"+ String(id),
         method: "POST",
-        data: {"title": title, "description": description,  "location": location, "start": start, "end": end},
+        data: {"feed_id": '1', "id": id, "title": title, "description": description,  "location": location, "start": start, "end": end},
         cache: false,
         success: function(data) {
             logJSON(data["item"]);
@@ -73,7 +73,7 @@ function submitForm() {
     var id = getIdent();
     var title = $("#title").val();
     var location = $("#location").val();
-    var desc = $("#description").val();
+    var desc = $("#descrip").val();
 
     ////////////////////////////////////////////////////
     //was trying to force a date because the date time picker isn't working, this will need ot be changed
@@ -103,7 +103,7 @@ $(document).ready(function(){
         success:function(item){
           window.items = item;
             $("#title").val(item.item.title);
-            $("#location").html("<input type=\"text\" placeholder=\"Location\" value = \""+ item.item.location +"\" />");
+            $("#location").val(item.item.location);
             //$("#start").val(moment(item.item.start).format("MM-DD-YYYY HH:mm"));
             //$("#start").html("value=\""+ moment(item.item.start).format("MM-DD-YYYY HH:mm") +"\"");
             $("#descrip").val(item.item.description);
@@ -159,7 +159,7 @@ $(document).ready(function(){
   </div>
   <div class="row">
     <div class="large-12 columns">
-        <input type="text" placeholder="Location" />
+        <input type="text" placeholder="Location" id = "location"/>
     </div>
   </div>
   <div class="row">

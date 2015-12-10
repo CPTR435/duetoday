@@ -7,17 +7,17 @@ $(document).ready(function(){
 //this is where the server is called to receive the information to be displayed in the planner for the next week
 $.ajax({
   dataType: "json",
-  url: config.server + "/user_items_by_datetime"+"/"+moment('11-01-2015').format('MM-DD-YYYY')+"/"+moment('11-01-2015').add(6, 'days').format('MM-DD-YYYY'),
+  url: config.server + "/user_items_by_datetime"+"/"+moment().format('MM-DD-YYYY')+"/"+moment().add(7, 'days').format('MM-DD-YYYY'),
   method: "GET",
   cache: false,
     success: function(events){
       window.stuff = events;
       var info = "";
       //this section loops through all of the events to display each one on the correct day9
-      for (var j = 0; j < 6; j++){
-        var plannerItem = $("<div class='plannerItem'><div class='date'>Due: " + moment('11-01-2015').add(j, 'days').format('dddd') + "</div></div>");
+      for (var j = 0; j < 7; j++){
+        var plannerItem = $("<div class='plannerItem'><div class='date'>Due: " + moment().add(j, 'days').format('dddd') + "</div></div>");
         for (var k = 0; k < events.length; k++){
-          if((moment('11-01-2015').add(j, 'days').format('DD') >= moment(events[k].start).format('DD') && moment('11-01-2015').add(j, 'days').format('DD') <= moment(events[k].end).format('DD')) || (moment('11-01-2015').add(j, 'days').format('dddd') == moment(events[k].start).format('dddd')) ){
+          if((moment().add(j, 'days').format('DD') >= moment(events[k].start).format('DD') && moment().add(j, 'days').format('DD') <= moment(events[k].end).format('DD')) || (moment().add(j, 'days').format('dddd') == moment(events[k].start).format('dddd')) ){
               var eventName = $("<div class='eventName toggle'></div>");
               eventName.text(events[k].title);
               eventName.append(" &nbsp; <i class =\"fa fa-caret-down\"></i>");
