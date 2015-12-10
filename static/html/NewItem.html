@@ -1,33 +1,310 @@
 <!-- forum.html -->
-<script src='static/fullcalendar/lib/moment.min.js'></script>
-<script>
-$(document).ready(function(){
+<!--<script>
+// For debugging
+debug=false;
+function log(str) {
+    if (debug)
+        $("#log").append(str+"<br>")
+}
+function logJSON(json) {
+    log(JSON.stringify(json))
+}
 
-  $.ajax({
-    dataType: "json",
-    url: config.server + "/item/" + getIdent(),
-    cache: false,
-      success:function(item){
-        window.items = item;
-        if(getIdent() != undefined){
-          $("#title").html("<input type=\"text\" placeholder=\"Title\" value = \""+ item.item.title +"\" />");
-          $("#location").html("<input type=\"text\" placeholder=\"Location\" value = \""+ item.item.location +"\" />");
-          //$("#start").val(moment(item.item.start).format("MM-DD-YYYY HH:mm"));
-          //$("#start").html("value=\""+ moment(item.item.start).format("MM-DD-YYYY HH:mm") +"\"");
-          $("#descrip").html("<textarea placeholder=\"Enter Description\">"+ item.item.description +"</textarea>");
-          $("#pageTitle").html("Edit Item");
+// Whether we clicked delete, so we know not to recreate it on form submission
+deleted = false;
 
-        } else{
-          $("#title").html("<input type=\"text\" placeholder=\"Title\" />");
-          $("#descrip").html("<textarea placeholder=\"Enter Description\"></textarea>");
-          $("#pageTitle").html("New Item");
+// Get the item information from the server (if we're editing a item)
+function getItem(id) {
+    $.ajax({
+        url: config.server+"/ITEM/"+id,
+        method: "GET",
+        cache: false,
+        dataType: "json",
+        success: function(data) {
+            if (data.error == undefined) {
+                var id=data.feed.id;
+                var desc=data.feed.description;
+                var location=data.feed.location;
+                var startTime = data.fee.start;
+                var title=data.feed.title;
+                var private=data.feed.private;
+                var admin=data.feed.administrators;
+                var owner=data.feed.owner;
+
+                $("#title").val(title);
+                $("#description").val(desc);
+                $("#private").prop('checked', private=='True');
+                logJSON(data)
+            } else {
+                feedNotFound();
+            }
+        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+            log("Status: " + textStatus + " Error: " + errorThrown);
         }
+    });
+}
 
-      }
-  });
+// Adds a new item
+function addFeed(title, description, private) {
+    $.ajax({
+        url: config.server+"/ITEM",
+        method: "PUT",
+        data: {"title": title, "description": description, "private": (private)?"1":"0"},
+        cache: false,
+        success: function(data) {
+            logJSON(data["Item"]);
+            window.location.hash = "#/planner";
+        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+            log("Status: " + textStatus + " Error: " + errorThrown);
+        }
+    })
+}
+
+// Update a Item
+function updateFeed(id, title, description, private) {
+    $.ajax({
+        url: config.server+"/ITEM/"+String(id),
+        method: "POST",
+        data: {"title": title, "description": description, "private": (private)?"1":"0"},
+        cache: false,
+        success: function(data) {
+            logJSON(data["Item"]);
+            window.location.hash = "#/planner";
+        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+            log("Status: " + textStatus + " Error: " + errorThrown);
+        }
+    })
+}
+
+// Delete a item
+function delFeed(id) {
+    deleted = true;
+    $.ajax({
+        url: config.server+"/ITEM/"+String(id),
+        method: "DELETE",
+        data: {"id": String(id)},
+        cache: false,
+        success: function(data) {
+            logJSON(data);
+            window.location.hash = "#/planner";
+        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+            log("Status: " + textStatus + " Error: " + errorThrown);
+        }
+    })
+}
+
+// When the submit button is clicked, got to determine if we should
+// update or add a item and get the data to submit.
+function submitForm() {
+    // Don't continue if we deleted this already
+    if (deleted)
+        return;
+
+    var id = feedId();
+    var title = $("#title").val();
+    var desc = $("#description").val();
+    var startTime = $("#start").val();
+    var endTime = $("#end").val();
+    var location = $("#location").val();
+    var priv = $("#private").prop('checked');
+
+    // New item
+    if (id == undefined) {
+        log("Adding Item: "+title+" - "+desc+" - "+priv);
+        addFeed(title, desc, priv);
+
+    // Edit item
+    } else {
+        log("Updating Item: "+id+" - "+title+" - "+desc+" - "+priv);
+        updateFeed(id, title, desc, priv);
+    }
+}
+
+// Error if the item wasn't found
+function feedNotFound() {
+    setTitle("Item Not Found");
+    $(".padded").html("");
+}
+
+// Set the title
+function setTitle(title) {
+    $(".row h3").html(title);
+}
+
+$(document).ready(function() {
+    var feed=getIdent();
+
+    // New item
+    if (feed == undefined) {
+        // Don't show the delete button when creating a new item
+        $("form input[value=Delete]").hide();
+    // Edit item
+    } else {
+        setTitle("Edit Item");
+        getFeed(feed);
+    }
+
+    // Make the submit button not actually submit the form but
+    // send data to the server via AJAX
+    $("form").submit(function(event) {
+        event.preventDefault();
+        submitForm();
+        return false;
+    });
+
+    // Cancel button goes back to the item page
+    $("form input[value=Cancel]").click(function() {
+        window.location.hash="#/planner";
+    });
+
+    // Delete on confirm
+    $(document).on('confirm.reveal', '[data-confirm]', function() {
+        $('.reveal-modal').foundation('reveal', 'close');
+        delFeed(feedId());
+        return false;
+    });
 });
 </script>
-<div id = "testing"></div>
+<br><br>
+<div class="row">
+  <div class="small-12 columns">
+    <h3 style='text-align: center;'>New Item</h3>
+  </div>
+</div>
+
+<style media="screen">
+  .padded {padding: 1em 1em 1em 1em;}
+</style>
+
+<div class="padded">
+<form>
+  <div class="row">
+    <div class="large-12 columns">
+        <input id="title" type="text" placeholder="Title" />
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>Notes</label>
+      <textarea id="description" placeholder="Enter Text"></textarea>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <input id="private" type="checkbox"> <label for="priave">Private</label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-6 columns">
+      <input class="button" type="submit" value="Ok"/>
+      <input class="button" type="button" value="Cancel"/>
+    </div>
+    <div class="large-6 columns">
+      <input class="button right" type="button" data-confirm value="Delete"/>
+    </div>
+  </div>
+</form>
+</div>
+<pre id="log" style="white-space: pre-wrap;"></pre>
+-->
+
+
+<script src='static/fullcalendar/lib/moment.min.js'></script>
+<script>
+debug=false;
+function log(str) {
+    if (debug)
+        $("#log").append(str+"<br>")
+}
+function logJSON(json) {
+    log(JSON.stringify(json))
+}
+
+// Adds a new feed
+function addItem(title, description, location, start, end) {
+    $.ajax({
+        url: config.server+"/item",
+        method: "PUT",
+        data: {"title": title, "description": description, "location": location, "start": start, "end": end },
+        cache: false,
+        success: function(data) {
+            logJSON(data["feed"]);
+            window.location.hash = "#/planner";
+        }, error: function(XMLHttpRequest, textStatus, errorThrown) {
+            log("Status: " + textStatus + " Error: " + errorThrown);
+        }
+    })
+}
+function submitForm() {
+    // Don't continue if we deleted this already
+    //if (deleted)
+    //    return;
+
+    var id = getIdent();
+    var title = $("#title").val();
+    var location = $("#location").val();
+    var desc = $("#description").val();
+    var start = $("#start").val();
+    var end = $("#end").val();
+
+    // New feed
+    if (id == undefined) {
+        log("Adding feed: "+title+" - "+desc+" - "+location+" - "+start+" - "+end);
+        addItem(title, desc, location, start, end);
+
+    // Edit feed
+    } else {
+        log("Updating feed: "+id+" - "+title+" - "+desc+" - "+location+" - "+start+" - "+end);
+        updateItem(id, title, desc, location, start, end);
+    }
+}
+
+
+$(document).ready(function(){
+  if (getIdent() != undefined){
+    $.ajax({
+      dataType: "json",
+      url: config.server + "/item/" + getIdent(),
+      cache: false,
+        success:function(item){
+          window.items = item;
+            $("#title").val(item.item.title);
+            $("#location").html("<input type=\"text\" placeholder=\"Location\" value = \""+ item.item.location +"\" />");
+            //$("#start").val(moment(item.item.start).format("MM-DD-YYYY HH:mm"));
+            //$("#start").html("value=\""+ moment(item.item.start).format("MM-DD-YYYY HH:mm") +"\"");
+            $("#descrip").val(item.item.description);
+            $("#pageTitle").html("Edit Item");
+        }
+    });
+  }
+   else{
+      $("#title").html();
+      $("#descrip").val();
+      $("#pageTitle").html("New Item");
+    }
+
+    // Make the submit button not actually submit the form but
+    // send data to the server via AJAX
+    $("form").submit(function(event) {
+        event.preventDefault();
+        submitForm();
+        return false;
+    });
+
+    // Cancel button goes back to the feeds page
+    $("form input[value=Cancel]").click(function() {
+        window.location.hash="#/feed";
+    });
+
+    // Delete on confirm
+    $(document).on('confirm.reveal', '[data-confirm]', function() {
+        $('.reveal-modal').foundation('reveal', 'close');
+        delFeed(feedId());
+        return false;
+    });
+
+});
+</script>
 <br><br>
 <div class="row">
   <div class="small-12 columns">
@@ -42,7 +319,8 @@ $(document).ready(function(){
 <div class="padded">
 <form>
   <div class="row">
-    <div class="large-12 columns" id = "title">
+    <div class="large-12 columns">
+      <input type="text" placeholder="Title" id = "title" />
     </div>
   </div>
   <div class="row">
@@ -69,7 +347,7 @@ $(document).ready(function(){
     <div class="large-4 columns">
       <div class="row collapse">
         <div class="small-9 columns">
-          <input type="text" placeholder="Choose End" data-date-time value = "11-02-2015 16:00" />
+          <input type="text" placeholder="Choose End" data-date-time id = "end" />
         </div>
       </div>
     </div>
@@ -93,11 +371,18 @@ $(document).ready(function(){
   <div class="row">
     <div class="large-12 columns">
       <label>Notes
-        <div id = "descrip"></div>
+        <textarea placeholder="Enter Description" id = "descrip"></textarea>"
       </label>
     </div>
+    <div class="large-6 columns">
+      <input class="button" type="submit" value="Ok"/>
+      <input class="button" type="button" value="Cancel"/>
+    </div>
+    <div class="large-6 columns">
+      <input class="button right" type="button" data-confirm value="Delete"/>
+    </div>
   </div>
-  <input type="submit" value="Ok"/>
+
 </form>
 </div>
 <script type="text/javascript" src="static/datetimepicker/foundation_calendar.js"></script>

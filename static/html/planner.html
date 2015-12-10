@@ -8,6 +8,7 @@ $(document).ready(function(){
 $.ajax({
   dataType: "json",
   url: config.server + "/user_items_by_datetime"+"/"+moment('11-01-2015').format('MM-DD-YYYY')+"/"+moment('11-01-2015').add(6, 'days').format('MM-DD-YYYY'),
+  method: "GET",
   cache: false,
     success: function(events){
       window.stuff = events;
