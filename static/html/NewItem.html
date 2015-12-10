@@ -12,11 +12,11 @@ function logJSON(json) {
 
 deleted = false;
 // Adds a new item
-function addItem(title, description, location, start, end) {
+function addItem(title, description, location, start, end, repeat) {
     $.ajax({
         url: config.server+"/item",
         method: "PUT",
-        data: {"title": title, "description": description, "location": location, "start": start, "end": end},
+        data: {"feed_id": '1', "title": title, "description": description, "location": location, "start": start, "end": end, "repeat": repeat},
         cache: false,
         success: function(data) {
             logJSON(data["item"]);
@@ -28,11 +28,11 @@ function addItem(title, description, location, start, end) {
 }
 
 // Update a item
-function updateItem(id, title, description, location, start, end) {
+function updateItem(id, title, description, location, start, end, repeat) {
     $.ajax({
         url: config.server+"/item/"+ String(id),
         method: "POST",
-        data: {"title": title, "description": description,  "location": location, "start": start, "end": end},
+        data: {"feed_id": '1', "id": id, "title": title, "description": description,  "location": location, "start": start, "end": end, "repeat": repeat},
         cache: false,
         success: function(data) {
             logJSON(data["item"]);
@@ -72,10 +72,14 @@ function submitForm() {
     var id = getIdent();
     var title = $("#title").val();
     var location = $("#location").val();
-    var desc = $("#description").val();
+    var desc = $("#descrip").val();
+    var repeat = $("#repeat").val();
 
     ////////////////////////////////////////////////////
     //was trying to force a date because the date time picker isn't working, this will need ot be changed
+
+    var start = "12/12/15";//$("#start").val();//$("#start").val();
+    var end = "";//$("#end").val();
     //var start = moment("12/10/15").format('MM-DD-YYYY');
     var start = $("#start").val();
     //var end = "";
@@ -84,13 +88,13 @@ function submitForm() {
 
     // New item
     if (id == undefined) {
-        log("Adding item: "+title+" - "+desc+" - "+location+" - "+start+" - "+end);
-        addItem(title, desc, location, start, end);
+        log("Adding item: "+title+" - "+desc+" - "+location+" - "+start+" - "+end+" - "+repeat);
+        addItem(title, desc, location, start, end, repeat);
 
     // Edit item
     } else {
-        log("Updating item: "+id+" - "+title+" - "+desc+" - "+location+" - "+start+" - "+end);
-        updateItem(id, title, desc, location, start, end);
+        log("Updating item: "+id+" - "+title+" - "+desc+" - "+location+" - "+start+" - "+end+" - "+repeat);
+        updateItem(id, title, desc, location, start, end, repeat);
     }
 }
 
@@ -109,8 +113,8 @@ $(document).ready(function(){
         success:function(item){
           window.items = item;
             $("#title").val(item.item.title);
-            $("#location").html("<input type=\"text\" placeholder=\"Location\" value = \""+ item.item.location +"\" />");
-            //$("#start").val(moment(item.item.start).format("MM-DD-YYYY HH:mm"));
+            $("#location").val(item.item.location);
+          //  $("#start").val(moment(item.item.start).format("MM-DD-YYYY HH:mm"));
             //$("#start").html("value=\""+ moment(item.item.start).format("MM-DD-YYYY HH:mm") +"\"");
             $("#start").val(moment(item.item.start).format("MM-DD-YYYY HH:mm"));
             $("#end").val(moment(item.item.end).format("MM-DD-YYYY HH:mm"));
@@ -174,7 +178,7 @@ $(document).ready(function(){
   </div>
   <div class="row">
     <div class="large-12 columns">
-        <input type="text" placeholder="Location" />
+        <input type="text" placeholder="Location" id = "location"/>
     </div>
   </div>
   <div class="row">
@@ -197,15 +201,18 @@ $(document).ready(function(){
 
   <div class="row">
     <div class="large-6 columns">
-      <label>Repeat</label>
-      <input type="radio" name="repeat" value="Once" id="repeat1"><label for="repeat1">One-time event</label><br />
-      <input type="radio" name="repeat" value="Daily" id="repeatdaily"><label for="repeatdaily">Daily</label><br />
-      <input type="radio" name="repeat" value="Weekday" id="everyweekday"><label for="everyweekday">Every weekday (Mon-Fri)</label><br />
-      <input type="radio" name="repeat" value="Weekly" id="Dayweekly"><label for="Dayweekly">Weekly (every Thursday)</label><br />
-      <input type="radio" name="repeat" value="Alternateweekly" id="Twoweeks"><label for="Twoweeks">Every 2 weeks (Thursday)</label><br />
-      <input type="radio" name="repeat" value="Monthly" id="Monthlyweekday"><label for="Monthlyweekday">Monthly (every first Thursday)</label><br />
-      <input type="radio" name="repeat" value="Daymonthly" id="MonthlyNumDay"><label for="MonthlyNumDay">Monthly (on day 5)</label><br />
-      <input type="radio" name="repeat" value="Yearly" id="repeatyearly"><label for="repeatyearly">Yearly (on November 5)</label><br />
+      <label>Repeat
+        <select id = "repeat">
+          <option type="radio" value="Once">One-time event</option>
+          <option type="radio" value="Daily">Daily</option>
+          <option type="radio" value="Weekday">Every weekday (Mon-Fri)</option>
+          <option type="radio" value="Weekly">Weekly (every Thursday)</option>
+          <option type="radio" value="Alternateweekly">Every 2 weeks (Thursday)</option>
+          <option type="radio" value="Monthly">Monthly (every first Thursday)</option/>
+          <option type="radio" value="Daymonthly">Monthly (on day 5)</option>
+          <option type="radio" value="Yearly">Yearly (on November 5)</option>
+        </select>
+      </label>
     </div>
    </div>
 
