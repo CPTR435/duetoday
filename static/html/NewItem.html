@@ -1,5 +1,8 @@
 <script src='static/fullcalendar/lib/moment.min.js'></script>
 <script type="text/javascript" src="static/datetimepicker/foundation_calendar.js"></script>
+<style>
+#EndDateRow { display: none; }
+</style>
 <script>
 debug=false;
 function log(str) {
@@ -16,7 +19,7 @@ function addItem(title, description, location, start, end, repeat) {
     $.ajax({
         url: config.server+"/item",
         method: "PUT",
-        data: {"feed_id": '1', "title": title, "description": description, "location": location, "start": start, "end": end, "repeat": repeat},
+        data: {"feed_id": '2', "title": title, "description": description, "location": location, "start": start, "end": end, "repeat": repeat},
         cache: false,
         success: function(data) {
             logJSON(data["item"]);
@@ -32,7 +35,7 @@ function updateItem(id, title, description, location, start, end, repeat) {
     $.ajax({
         url: config.server+"/item/"+ String(id),
         method: "POST",
-        data: {"feed_id": '1', "id": id, "title": title, "description": description,  "location": location, "start": start, "end": end, "repeat": repeat},
+        data: {"feed_id": '2', "id": id, "title": title, "description": description,  "location": location, "start": start, "end": end, "repeat": repeat},
         cache: false,
         success: function(data) {
             logJSON(data["item"]);
@@ -77,8 +80,16 @@ function submitForm() {
 
 
     var start = $("#start").val();
-    //var end = "";
     var end = $("#end").val();
+
+    // If all day event, then set start to beginning of day and end to end of day
+    var allDay = $("#AllDayEvent").prop('checked');
+    if (allDay) {
+        // Note: if you just use .format() here, you'll get a 500 error with
+        //  [setup:28] can't compare offset-naive and offset-aware datetimes
+        start = moment(start).startOf('day').format("MM-DD-YYYY HH:mm:ss");
+        end = moment(end).endOf('day').format("MM-DD-YYYY HH:mm:ss");
+    }
 
     // New item
     if (id == undefined) {
@@ -108,6 +119,17 @@ function updateSelect(){
 
 
 }
+
+function updateAllDay() {
+    var allDay = $("#AllDayEvent").prop('checked');
+    var end = $("#EndDateRow");
+
+    if (allDay)
+        end.hide();
+    else
+        end.show();
+}
+
 // We want to do this after we set the initial values, so we've moved this here from
 // foundation_calendar.js
 function loadCalendar() {
@@ -115,10 +137,13 @@ function loadCalendar() {
 }
 
 $(document).ready(function(){
-  $("#start").on("change",function(){
-    updateSelect();
-  });
+  // Update the select box whenever the start date is changed
+  $("#start").on("change", updateSelect);
   $("#start").on("dateChange",updateSelect);
+
+  // Show/hide the end date box based on if all day is checked
+  $("#AllDayEvent").on("change", updateAllDay);
+
   if (getIdent() != undefined){
     $.ajax({
       dataType: "json",
@@ -128,12 +153,25 @@ $(document).ready(function(){
           window.items = item;
             $("#title").val(item.item.title);
             $("#location").val(item.item.location);
-            $("#start").val(moment(item.item.start).format("MM-DD-YYYY HH:mm"));
-            $("#end").val(moment(item.item.end).format("MM-DD-YYYY HH:mm"));
+            $("#start").val(moment(item.item.start).format("MM-DD-YYYY HH:mm:ss"));
+            $("#end").val(moment(item.item.end).format("MM-DD-YYYY HH:mm:ss"));
             $("#descrip").val(item.item.description);
             $("#pageTitle").html("Edit Item");
+
+            // Determine if all day event
+            var start = moment(item.item.start);
+            var startOf = moment(item.item.start).startOf('day');
+            var end = moment(item.item.end);
+            var endOf = moment(item.item.end).endOf('day');
+            var endStartOf = moment(item.item.end).startOf('day');
+
+            // Deal with the all day events being represented in the database as
+            // from 00:00:00 to 23:59:59 of the day.
+            allDay = (start.format() == startOf.format() && end.format() == endOf.format());
+            $("#AllDayEvent").prop('checked', allDay);
             loadCalendar();
             updateSelect();
+            updateAllDay();
         }
     });
   }
@@ -162,7 +200,9 @@ $(document).ready(function(){
 
     // Cancel button goes back to the item page
     $("form input[value=Cancel]").click(function() {
-        window.location.hash="#/planner";
+        // Make it work from either calendar or planner pages by just using back button
+        window.history.back();
+        //window.location.hash="#/planner";
     });
 
     // Delete on confirm; off to remove the one from the feeds page if set
@@ -206,6 +246,11 @@ $(document).ready(function(){
     </div>
   </div>
   <div class="row">
+    <div class="large-2 small-4 columns">
+      <input id="AllDayEvent" type="checkbox" checked="checked"><label for="AllDayEvent">All Day Event</label>
+    </div>
+  </div>
+  <div class="row" id="EndDateRow">
     <div class="large-2 small-4 columns">
       <label>End Date</label>
     </div>
