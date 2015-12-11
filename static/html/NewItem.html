@@ -12,11 +12,11 @@ function logJSON(json) {
 
 deleted = false;
 // Adds a new item
-function addItem(title, description, location, start, end, repeat) {
+function addItem(feed_id, title, description, location, start, end, repeat) {
     $.ajax({
         url: config.server+"/item",
         method: "PUT",
-        data: {"feed_id": '1', "title": title, "description": description, "location": location, "start": start, "end": end, "repeat": repeat},
+        data: {"feed_id": feed_id, "title": title, "description": description, "location": location, "start": start, "end": end, "repeat": repeat},
         cache: false,
         success: function(data) {
             logJSON(data["item"]);
@@ -28,11 +28,11 @@ function addItem(title, description, location, start, end, repeat) {
 }
 
 // Update a item
-function updateItem(id, title, description, location, start, end, repeat) {
+function updateItem(feed_id, id, title, description, location, start, end, repeat) {
     $.ajax({
         url: config.server+"/item/"+ String(id),
         method: "POST",
-        data: {"feed_id": '1', "id": id, "title": title, "description": description,  "location": location, "start": start, "end": end, "repeat": repeat},
+        data: {"feed_id": feed_id, "id": id, "title": title, "description": description,  "location": location, "start": start, "end": end, "repeat": repeat},
         cache: false,
         success: function(data) {
             logJSON(data["item"]);
@@ -79,16 +79,20 @@ function submitForm() {
     var start = $("#start").val();
     //var end = "";
     var end = $("#end").val();
+    if (moment($("#end").val()).isBefore(start)){
+      end = start;
+    }
+    var feed_id = $("#feeds").val();
 
     // New item
     if (id == undefined) {
         log("Adding item: "+title+" - "+desc+" - "+location+" - "+start+" - "+end+" - "+repeat);
-        addItem(title, desc, location, start, end, repeat);
+        addItem(feed_id, title, desc, location, start, end, repeat);
 
     // Edit item
     } else {
         log("Updating item: "+id+" - "+title+" - "+desc+" - "+location+" - "+start+" - "+end+" - "+repeat);
-        updateItem(id, title, desc, location, start, end, repeat);
+        updateItem(feed_id, id, title, desc, location, start, end, repeat);
     }
 }
 
@@ -103,6 +107,7 @@ function updateSelect(){
   var start = moment($("#start").val())
   var monthly1 = "Monthly (every "+ String(week_of_month(start))+ " "+start.format('dddd')+")";
   var monthly2 = "Monthly (on day " + String(start.date()) + ")";
+
   $("#monthly1").text(monthly1);
   $("#monthly2").text(monthly2);
 
@@ -113,6 +118,29 @@ function updateSelect(){
 function loadCalendar() {
     $.fcdp.init();
 }
+
+function getFeeds(feed_id){
+  $.ajax({
+    dataType: "json",
+    method: "GET",
+    url: config.server + "/user_feeds",
+    cache: false,
+      success:function(feeds){
+        window.feeds = feeds;
+        var feedInfo = "";
+        for (var j = 0; j < feeds.length; j++){
+          var myFeeds = $('#feeds');
+          myFeeds.append(
+                $('<option></option>').val(feeds[j].id).text(feeds[j].title)
+          );
+          if(feed_id != undefined){
+            myFeeds.val(feed_id);
+          }
+        }
+      }
+    });
+  }
+
 
 $(document).ready(function(){
   $("#start").on("change",function(){
@@ -134,6 +162,7 @@ $(document).ready(function(){
             $("#pageTitle").html("Edit Item");
             loadCalendar();
             updateSelect();
+            getFeeds(item.item.feed_id);
         }
     });
   }
@@ -148,6 +177,7 @@ $(document).ready(function(){
       // Initialize the date-time picker
       loadCalendar();
       updateSelect();
+      getFeeds();
     }
 
 
@@ -219,14 +249,19 @@ $(document).ready(function(){
     <div class="large-6 columns">
       <label>Repeat
         <select id = "repeat">
-          <option type="radio" value="Once">One-time event</option>
-          <option type="radio" value="Daily">Daily</option>
-          <option type="radio" value="Weekday">Every weekday (Mon-Fri)</option>
-          <option type="radio" value="Weekly">Weekly</option>
-          <option type="radio" value="Alternateweekly">Every 2 weeks</option>
-          <option type="radio" value="Monthly" id = "monthly1"></option/>
-          <option type="radio" value="Daymonthly" id = "monthly2"></option>
-          <option type="radio" value="Yearly">Yearly</option>
+          <option value="Once">One-time event</option>
+          <option value="Daily">Daily</option>
+          <option value="Weekday">Every weekday (Mon-Fri)</option>
+          <option value="Weekly">Weekly</option>
+          <option value="Alternateweekly">Every 2 weeks</option>
+          <option value="Monthly" id = "monthly1"></option/>
+          <option value="Daymonthly" id = "monthly2"></option>
+          <option value="Yearly">Yearly</option>
+        </select>
+      </label>
+      <label>Feed
+        <select id = "feeds">
+
         </select>
       </label>
     </div>
