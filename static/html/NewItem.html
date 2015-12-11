@@ -96,16 +96,14 @@ function submitForm() {
     }
 
     // New item
-    if(feed_id != null){
-      if (id == undefined) {
-          log("Adding item: "+title+" - "+desc+" - "+location+" - "+start+" - "+end+" - "+repeat);
-          addItem(feed_id, title, desc, location, start, end, repeat);
+    if (id == undefined) {
+        log("Adding item: "+title+" - "+desc+" - "+location+" - "+start+" - "+end+" - "+repeat);
+        addItem(feed_id, title, desc, location, start, end, repeat);
 
-      // Edit item
-      } else {
-          log("Updating item: "+id+" - "+title+" - "+desc+" - "+location+" - "+start+" - "+end+" - "+repeat);
-          updateItem(feed_id, id, title, desc, location, start, end, repeat);
-      }
+    // Edit item
+    } else {
+        log("Updating item: "+id+" - "+title+" - "+desc+" - "+location+" - "+start+" - "+end+" - "+repeat);
+        updateItem(feed_id, id, title, desc, location, start, end, repeat);
     }
 }
 
@@ -143,6 +141,17 @@ function loadCalendar() {
     $.fcdp.init();
 }
 
+// Error if the feed wasn't found
+function feedNotFound() {
+    setTitle("Feed Not Found");
+    $(".padded").html("");
+}
+
+// Set the title
+function setTitle(title) {
+    $(".row h3").html(title);
+}
+
 function getFeeds(feed_id){
   $.ajax({
     dataType: "json",
@@ -157,9 +166,14 @@ function getFeeds(feed_id){
           myFeeds.append(
                 $('<option></option>').val(feeds[j].id).text(feeds[j].title)
           );
-          if(feed_id != undefined){
-            myFeeds.val(feed_id);
-          }
+
+        }
+        if(feed_id != undefined){
+          myFeeds.val(feed_id);
+        }
+        if (feeds.length == 0){
+          feedNotFound();
+          setTitle("No Available Feeds!")
         }
       }
     });
