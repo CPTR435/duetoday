@@ -96,14 +96,16 @@ function submitForm() {
     }
 
     // New item
-    if (id == undefined) {
-        log("Adding item: "+title+" - "+desc+" - "+location+" - "+start+" - "+end+" - "+repeat);
-        addItem(feed_id, title, desc, location, start, end, repeat);
+    if(feed_id != null){
+      if (id == undefined) {
+          log("Adding item: "+title+" - "+desc+" - "+location+" - "+start+" - "+end+" - "+repeat);
+          addItem(feed_id, title, desc, location, start, end, repeat);
 
-    // Edit item
-    } else {
-        log("Updating item: "+id+" - "+title+" - "+desc+" - "+location+" - "+start+" - "+end+" - "+repeat);
-        updateItem(feed_id, id, title, desc, location, start, end, repeat);
+      // Edit item
+      } else {
+          log("Updating item: "+id+" - "+title+" - "+desc+" - "+location+" - "+start+" - "+end+" - "+repeat);
+          updateItem(feed_id, id, title, desc, location, start, end, repeat);
+      }
     }
 }
 
