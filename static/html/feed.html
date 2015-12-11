@@ -146,6 +146,10 @@ function feedList() {
                 $('#feeds').append(itemDiv.append(titleDiv, descDiv))
             }
 
+            if (data.length == 0) {
+                $("#error").show();
+            }
+
             logJSON(data)
         }, error: function(XMLHttpRequest, textStatus, errorThrown) {
             log("Status: " + textStatus + " Error: " + errorThrown);
@@ -158,6 +162,15 @@ $(document).ready(function() {
 });
 </script>
 <form id="debugForm" style="display:none"><input type="submit" value="Add demo data" /></form>
+
+<style>
+#error {display:none;}
+</style>
+<div class="row" id="error">
+  <div class="small-12 columns">
+    <h3 style='text-align: center;'>Please create a feed</h3>
+  </div>
+</div>
 
 <div id="feeds"></div>
 <div id="eventDetails"></div>
